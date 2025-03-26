@@ -767,6 +767,7 @@ end)
             task.spawn(function()
                 while true do
                     task.wait(0.05)
+                    isLoop3Active
                     local succes, fallo = pcall(function()
                         local Forms = {
                             "Ego Instinct","Divine Blue","Astral Instinct", "Divine Rose Prominence", "Ultra Ego", "SSJB4", "True God of Creation",
