@@ -764,7 +764,6 @@ end)
 
     local function loop3()
         pcall(function()
-            if isLoop3Active then
             task.spawn(function()
                 while true do
                     task.wait(0.05)
