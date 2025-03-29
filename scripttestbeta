@@ -510,19 +510,19 @@ local function assignQuest()
     end
 
     if not currentQuest then
-        
+        warn("[INFO] Aucune quête disponible pour cette stat.")
         return
     end
 
     if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
         SelectedQuest = previousQuest
         SelectedMob = previousMob
-        
+        warn("[INFO] Passage à la quête précédente : " .. previousQuest)
     else
         SelectedQuest = currentQuest
         SelectedMob = currentMob
         isDoingAlternateQuest = not isDoingAlternateQuest
-        
+        warn("[INFO] Passage à la quête principale : " .. currentQuest)
     end
 end
 
@@ -545,7 +545,7 @@ local function startMission()
             player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
             task.wait()
             events.Qaction:InvokeServer(npc)
-            
+            warn("[INFO] Quête acceptée : " .. SelectedQuest)
         end
     end)
 
@@ -566,13 +566,12 @@ task.spawn(function()
 end)
 
 
-
 task.spawn(function()
     while true do
         task.wait(1)
         local success, fallo = pcall(function()
             -- Si la puissance est inférieure à 2 milliards, téléporter vers Earth
-            if data.Strength.Value < 200000000 and game.PlaceId ~= 3311165597 and isLoop1Active then
+            if data.Strength.Value < 2000000000 and game.PlaceId ~= 3311165597 and isLoop1Active then
                 local A_1 = "Earth"
                 local Event = events.TP
                 if game.PlaceId ~= 3311165597 then  -- Vérifier si on est déjà sur Earth
@@ -581,7 +580,7 @@ task.spawn(function()
                 end
                 task.wait(8)  -- Attendre 8 secondes avant de réévaluer
             -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet
-        elseif data.Strength.Value >= 200000000 and game.PlaceId ~= 5151400895 and isLoop1Active then
+            elseif data.Strength.Value >= 2000000000 and game.PlaceId ~= 5151400895 and isLoop1Active then
                 local A_1 = "Vills Planet"
                 local Event = events.TP
                 if game.PlaceId ~= 5151400895 then  -- Vérifier si on est déjà sur Vills Planet
@@ -590,14 +589,15 @@ task.spawn(function()
                 end
                 task.wait(8)  -- Attendre 8 secondes avant de réévaluer
             end
-        end
-        
+        end)
 
         if not success then
             warn("Error executing teleportation: " .. fallo)
         end
     end
 end)
+
+
 
 task.spawn(function()
     while true do
