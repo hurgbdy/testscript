@@ -573,7 +573,6 @@ task.spawn(function()
         local success, fallo = pcall(function()
             -- Si la puissance est inférieure à 2 milliards, téléporter vers Earth
             if data.Strength.Value < 200000000 and game.PlaceId ~= 3311165597 and isLoop1Active then
-                if data.Zeni.Value >= 15000 then
                 local A_1 = "Earth"
                 local Event = events.TP
                 if game.PlaceId ~= 3311165597 then  -- Vérifier si on est déjà sur Earth
