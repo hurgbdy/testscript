@@ -478,8 +478,6 @@ local missions = {
 }
 
 
-
-
 local SelectedQuest
 local SelectedMob
 local isDoingAlternateQuest = false
@@ -598,7 +596,6 @@ task.spawn(function()
 end)
 
 
-
 task.spawn(function()
     while true do
         task.wait(1)
@@ -608,7 +605,7 @@ task.spawn(function()
             end)
 
             if not success then
-                
+                warn("Error al invocar el evento rebirth: " .. fallo)
             end
         end
     end
@@ -626,6 +623,7 @@ spawn(function()
         end)
     end
 end)
+
 
 
 task.spawn(function()
