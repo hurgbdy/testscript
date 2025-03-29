@@ -534,15 +534,6 @@ local function startMission()
 
     pcall(function()
         local questValue = game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value
-        local playerZeni = game:GetService("ReplicatedStorage").Datas[player.UserId].Zeni.Value
-        local playerStrength = data.Strength.Value
-
-        if playerZeni >= 15000 and playerStrength >= 200000000 then
-            game:GetService("ReplicatedStorage").Events.Teleport:InvokeServer("Vills Planet")
-            task.wait(5) -- Attendre la téléportation
-        else
-            assignQuest() -- Continue la quête si pas assez de Zeni ou Strength
-        end
 
         if questValue == SelectedQuest then
             isTakingQuest = false
@@ -550,17 +541,17 @@ local function startMission()
         end
 
         local npc = game:GetService("Workspace").Others.NPCs:FindFirstChild(SelectedQuest)
-        if npc and npc:FindFirstChild("HumanoidRootPart") then
+        if npc and npc:FindFirstChild("HumanoidRootPart") and isLoop1Active then
             player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
             task.wait()
             events.Qaction:InvokeServer(npc)
+            
         end
     end)
 
     task.wait()
     isTakingQuest = false
 end
-
 
 task.spawn(function()
     while true do
@@ -575,31 +566,22 @@ task.spawn(function()
 end)
 
 
+local function teleportToVills()
+    local playerZeni = game:GetService("ReplicatedStorage").Datas[player.UserId].Zeni.Value
+    local playerStrength = data.Strength.Value
+    
+    if playerZeni >= 15000 and playerStrength >= 200000000 then
+        game:GetService("ReplicatedStorage").Events.Teleport:InvokeServer("Vills Planet")
+        task.wait(3) -- Attendre la téléportation
+    end
+end
+
 task.spawn(function()
     while true do
-        task.wait(2)
-        local success, fallo = pcall(function()
-            if data.Strength.Value >= 200000000 and game.PlaceId ~= 5151400895 then
-                if data.Zeni.Value >= 15000 then
-                    print("Se téléporte vers Vills Planet")
-                    local Event = game:GetService("ReplicatedStorage").Package.Events.TP
-                    Event:InvokeServer("Vills Planet")
-                    return
-                else
-                    print("Pas assez de Zeni, reste sur SSJG Kakata")
-                    SelectedQuest = "SSJG Kakata"
-                    SelectedMob = "SSJG Kakata"
-                    return
-                end
-            end
-        end)
-        
-        if not success then
-            warn("Erreur dans la boucle principale :", fallo)
-        end
+        task.wait(5) -- Vérification périodique toutes les 10 secondes
+        pcall(teleportToVills)
     end
 end)
-
 
 
 spawn(function()
