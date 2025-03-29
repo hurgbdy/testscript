@@ -570,34 +570,27 @@ task.spawn(function()
     while true do
         task.wait(2)
         local success, fallo = pcall(function()
-            if checkValue >= 200000000 and game.placeId ~= 5151400895 then
+            if data.Strength.Value >= 200000000 and game.PlaceId ~= 5151400895 then
                 if data.Zeni.Value >= 15000 then
-                    print("15k or more is true")
-                    local A_1 = "Vills Planet"
+                    print("Se téléporte vers Vills Planet")
                     local Event = game:GetService("ReplicatedStorage").Package.Events.TP
-                    Event:InvokeServer(A_1)
+                    Event:InvokeServer("Vills Planet")
                     return
                 else
+                    print("Pas assez de Zeni, reste sur SSJG Kakata")
                     SelectedQuest = "SSJG Kakata"
                     SelectedMob = "SSJG Kakata"
-                    print("15k or more is false")
                     return
                 end
             end
-
-            if firstquest == true then
-                lastquest = SelectedQuest
-                firstquest = false
-            end
-
-            assignQuest()
         end)
         
         if not success then
-            warn("Error in main loop", fallo)
+            warn("Erreur dans la boucle principale :", fallo)
         end
     end
 end)
+
 
 
 spawn(function()
@@ -837,7 +830,7 @@ end)
         pcall(function()
             task.spawn(function()
                 while true do
-                    task.wait(.05)
+                    task.wait()
                     
                     
                     local success, fallo = pcall(function()
@@ -869,11 +862,11 @@ end)
                             if bestTransfo and bestTransfo ~= currentTransfo then
                                 -- Se détransformer
                                 taRemote:InvokeServer()
-                                task.wait(0.5) -- Petit délai pour éviter les bugs
+                                task.wait() -- Petit délai pour éviter les bugs
     
                                 -- Équiper la nouvelle transformation
                                 equipRemote:InvokeServer(bestTransfo)
-                                task.wait(0.5)
+                                task.wait()
     
                                 -- Se re-transformer
                                 taRemote:InvokeServer()
