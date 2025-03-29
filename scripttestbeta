@@ -500,6 +500,7 @@ end
 
 local function assignQuest()
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
+
     local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
     local previousQuest, previousMob = nil, nil
 
@@ -508,15 +509,20 @@ local function assignQuest()
         previousMob = missions[questIndex - 1].bossName
     end
 
-    if not currentQuest then return end
+    if not currentQuest then
+        
+        return
+    end
 
     if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
         SelectedQuest = previousQuest
         SelectedMob = previousMob
+        
     else
         SelectedQuest = currentQuest
         SelectedMob = currentMob
         isDoingAlternateQuest = not isDoingAlternateQuest
+        
     end
 end
 
@@ -533,7 +539,9 @@ local function startMission()
 
         if playerZeni >= 15000 and playerStrength >= 200000000 then
             game:GetService("ReplicatedStorage").Events.Teleport:InvokeServer("Vills Planet")
-            task.wait(2) -- Attendre la téléportation
+            task.wait(5) -- Attendre la téléportation
+        else
+            assignQuest() -- Continue la quête si pas assez de Zeni ou Strength
         end
 
         if questValue == SelectedQuest then
@@ -553,6 +561,7 @@ local function startMission()
     isTakingQuest = false
 end
 
+
 task.spawn(function()
     while true do
         task.wait()
@@ -562,6 +571,32 @@ task.spawn(function()
                 startMission()
             end
         end)
+    end
+end)
+
+
+task.spawn(function()
+    while true do
+        task.wait(2)
+        local success, fallo = pcall(function()
+            if data.Strength.Value >= 200000000 and game.PlaceId ~= 5151400895 then
+                if data.Zeni.Value >= 15000 then
+                    print("Se téléporte vers Vills Planet")
+                    local Event = game:GetService("ReplicatedStorage").Package.Events.TP
+                    Event:InvokeServer("Vills Planet")
+                    return
+                else
+                    print("Pas assez de Zeni, reste sur SSJG Kakata")
+                    SelectedQuest = "SSJG Kakata"
+                    SelectedMob = "SSJG Kakata"
+                    return
+                end
+            end
+        end)
+        
+        if not success then
+            warn("Erreur dans la boucle principale :", fallo)
+        end
     end
 end)
 
