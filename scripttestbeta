@@ -453,33 +453,34 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
 local data = game.ReplicatedStorage.Datas[player.UserId]
 local events = game:GetService("ReplicatedStorage").Package.Events
 
-local missionsEarth = {
-    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
-    { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100001 },
-    { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 200000 },
-    { name = "Mapa", bossName = "Mapa", requiredValue = 200001, endRange = 300000 },
-    { name = "Citizen", bossName = "Evil Saya", requiredValue = 300001, endRange = 400000 },
-    { name = "Top X Fighter", bossName = "X Fighter Master", requiredValue = 400001, endRange = 700000 },
-    { name = "Super Vegetable", bossName = "Super Vegetable", requiredValue = 750001, endRange = 1200000 },
-    { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500000, endRange = 5000000 },
-    { name = "SSJ2 Wukong", bossName = "SSJ2 Wukong", requiredValue = 5000001, endRange = 8000000 },
-    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 8000000, endRange = 50000000 },
-    { name = "Broccoli", bossName = "Broccoli", requiredValue = 50000001, endRange = 150000000 },
-    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 150000001, endRange = 2000000000 },
-}
+local missions = {
+    Earth = {
+        { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
+        { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100001 },
+        { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 200000 },
+        { name = "Mapa", bossName = "Mapa", requiredValue = 200001, endRange = 300000 },
+        { name = "Citizen", bossName = "Evil Saya", requiredValue = 300001, endRange = 400000 },
+        { name = "Top X Fighter", bossName = "X Fighter Master", requiredValue = 400001, endRange = 700000 },
+        { name = "Super Vegetable", bossName = "Super Vegetable", requiredValue = 750001, endRange = 1200000 },
+        { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500000, endRange = 5000000 },
+        { name = "SSJ2 Wukong", bossName = "SSJ2 Wukong", requiredValue = 5000001, endRange = 8000000 },
+        { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 8000000, endRange = 50000000 },
+        { name = "Broccoli", bossName = "Broccoli", requiredValue = 50000001, endRange = 150000000 },
+        { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 150000001, endRange = 2000000000 }
+    },
 
-local missionsVills = {
-    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 2000000001, endRange = 300000000 },
-    { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 300000001, endRange = 600000000 },
-    { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 600000001, endRange = 1200000000 },
-    { name = "Vis (20%)", bossName = "Vis (20%)", requiredValue = 1200000001, endRange = 1800000000 },
-    { name = "Vegetable (LBSSJ4)", bossName = "Vegetable (LBSSJ4)", requiredValue = 1800000001, endRange = 2700000000 },
-    { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2700000001, endRange = 4200000000 },
-    { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
-    { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 5500000000 },
-    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 5500000001, endRange = math.huge },
+    VillsPlanet = {
+        { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 2000000001, endRange = 300000000 },
+        { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 300000001, endRange = 600000000 },
+        { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 600000001, endRange = 1200000000 },
+        { name = "Vis (20%)", bossName = "Vis (20%)", requiredValue = 1200000001, endRange = 1800000000 },
+        { name = "Vegetable (LBSSJ4)", bossName = "Vegetable (LBSSJ4)", requiredValue = 1800000001, endRange = 2700000000 },
+        { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2700000001, endRange = 4200000000 },
+        { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
+        { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 5500000000 },
+        { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 5500000001, endRange = math.huge }
+    }
 }
-
 
 local SelectedQuest
 local SelectedMob
@@ -490,8 +491,9 @@ local function BossIsAlive(mobName)
     return boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0
 end
 
-local function getQuestByStat(stat)
-    for i, mission in ipairs(missions) do
+-- Fonction pour obtenir une quête en fonction de la statistique
+local function getQuestByStat(stat, currentMissions)
+    for i, mission in ipairs(currentMissions) do
         if stat >= mission.requiredValue and stat <= mission.endRange then
             return mission.name, mission.bossName, i
         end
@@ -499,14 +501,22 @@ local function getQuestByStat(stat)
     return nil, nil, nil
 end
 
-local function assignQuest()
-    local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
 
+local function assignQuest()
+    updatePlanet()  -- Met à jour la planète
+
+    -- Récupérer les missions de la planète actuelle
     local currentMissions = getCurrentMissions()
+    if not currentMissions then
+        warn("[INFO] Aucune planète trouvée pour les missions.")
+        return
+    end
+
+    local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
     local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat, currentMissions)
     local previousQuest, previousMob = nil, nil
 
-    -- Récupérer la quête précédente, si disponible
+    -- Si une quête est trouvée, assigner la quête appropriée
     if questIndex and questIndex > 1 then
         previousQuest = currentMissions[questIndex - 1].name
         previousMob = currentMissions[questIndex - 1].bossName
@@ -531,18 +541,19 @@ local function assignQuest()
 end
 
 
-local currentPlanet = "Earth"  -- Valeur initiale, à ajuster selon l'emplacement du joueur
 
--- Fonction pour obtenir la liste des missions en fonction de la planète actuelle
+local currentPlanet = ""
+
 local function getCurrentMissions()
     if currentPlanet == "Earth" then
-        return missionsEarth
-    elseif currentPlanet == "Vills Planet" then
-        return missionsVills
+        return missions.Earth
+    elseif currentPlanet == "VillsPlanet" then
+        return missions.VillsPlanet
     else
         return nil
     end
 end
+
 
 
 
@@ -576,22 +587,25 @@ end
 
 
 local function updatePlanet()
+    -- Assurez-vous que PlaceId correspond bien aux ID des mondes
     if game.PlaceId == 3311165597 then
         currentPlanet = "Earth"
     elseif game.PlaceId == 5151400895 then
-        currentPlanet = "Vills Planet"
+        currentPlanet = "VillsPlanet"
+    else
+        currentPlanet = ""  -- Valeur par défaut si aucune correspondance
     end
 end
+
 
 
 task.spawn(function()
     while true do
         task.wait()
         pcall(function()
-            updatePlanet()  -- Met à jour la planète en fonction du lieu du joueur
-            assignQuest()   -- Assigner la quête appropriée en fonction de la planète
+            assignQuest()  -- Met à jour et assigne la quête
             if game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value == "" then
-                startMission()
+                startMission()  -- Lance la mission si la quête est vide
             end
         end)
     end
