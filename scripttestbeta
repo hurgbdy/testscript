@@ -454,11 +454,29 @@ local data = game.ReplicatedStorage.Datas[player.UserId]
 local events = game:GetService("ReplicatedStorage").Package.Events
 
 local missions = {
-    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 10000000 },
-    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
-    { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
-    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge },
+    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
+    { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100001 },
+    { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 200000 },
+    { name = "Mapa", bossName = "Mapa", requiredValue = 200001, endRange = 300000 },
+    { name = "Citizen", bossName = "Evil Saya", requiredValue = 300001, endRange = 400000 },
+    { name = "Top X Fighter", bossName = "X Fighter Master", requiredValue = 400001, endRange = 700000 },
+    { name = "Super Vegetable", bossName = "Super Vegetable", requiredValue = 750001, endRange = 1200000 },
+    { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500000, endRange = 5000000 },
+    { name = "SSJ2 Wukong", bossName = "SSJ2 Wukong", requiredValue = 5000001, endRange = 8000000 },
+    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 8000000, endRange = 50000000 },
+    { name = "Broccoli", bossName = "Broccoli", requiredValue = 50000001, endRange = 150000000 },
+    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 150000001, endRange = 200000000 },
+    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 200000001, endRange = 300000000 },
+    { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 300000001, endRange = 600000000 },
+    { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 600000001, endRange = 1200000000 },
+    { name = "Vis (20%)", bossName = "Vis (20%)", requiredValue = 1200000001, endRange = 1800000000 },
+    { name = "Vegetable (LBSSJ4)", bossName = "Vegetable (LBSSJ4)", requiredValue = 1800000001, endRange = 2700000000 },
+    { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2700000001, endRange = 4200000000 },
+    { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
+    { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 5500000000 },
+    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 5500000001, endRange = math.huge },
 }
+
 
 
 
@@ -553,7 +571,7 @@ task.spawn(function()
         task.wait(1)
         local success, fallo = pcall(function()
             -- Si la puissance est inférieure à 2 milliards, téléporter vers Earth
-            if data.Strength.Value < math.huge and game.PlaceId ~= 3311165597 and isLoop1Active then
+            if data.Strength.Value < 200000000 and game.PlaceId ~= 3311165597 and isLoop1Active then
                 local A_1 = "Earth"
                 local Event = events.TP
                 if game.PlaceId ~= 3311165597 then  -- Vérifier si on est déjà sur Earth
@@ -562,7 +580,7 @@ task.spawn(function()
                 end
                 task.wait(8)  -- Attendre 8 secondes avant de réévaluer
             -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet
-            elseif data.Strength.Value >= math.huge and game.PlaceId ~= 5151400895 and isLoop1Active then
+            elseif data.Strength.Value >= 200000000 and game.PlaceId ~= 5151400895 and isLoop1Active then
                 local A_1 = "Vills Planet"
                 local Event = events.TP
                 if game.PlaceId ~= 5151400895 then  -- Vérifier si on est déjà sur Vills Planet
