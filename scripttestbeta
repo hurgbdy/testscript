@@ -593,7 +593,6 @@ task.spawn(function()
                 task.wait(8)  -- Attendre 8 secondes avant de réévaluer
             -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet
         elseif data.Strength.Value >= 200000000 and game.PlaceId ~= 5151400895 and isLoop1Active then
-            if data.Zeni.Value >= 15000 then
                 local A_1 = "Vills Planet"
                 local Event = events.TP
                 if game.PlaceId ~= 5151400895 then  -- Vérifier si on est déjà sur Vills Planet
