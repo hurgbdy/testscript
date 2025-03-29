@@ -453,7 +453,7 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
 local data = game.ReplicatedStorage.Datas[player.UserId]
 local events = game:GetService("ReplicatedStorage").Package.Events
 
-local missions = {
+local missionsEarth = {
     { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
     { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100001 },
     { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 200000 },
@@ -465,8 +465,11 @@ local missions = {
     { name = "SSJ2 Wukong", bossName = "SSJ2 Wukong", requiredValue = 5000001, endRange = 8000000 },
     { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 8000000, endRange = 50000000 },
     { name = "Broccoli", bossName = "Broccoli", requiredValue = 50000001, endRange = 150000000 },
-    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 150000001, endRange = 200000000 },
-    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 200000001, endRange = 300000000 },
+    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 150000001, endRange = 2000000000 },
+}
+
+local missionsVills = {
+    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 2000000001, endRange = 300000000 },
     { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 300000001, endRange = 600000000 },
     { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 600000001, endRange = 1200000000 },
     { name = "Vis (20%)", bossName = "Vis (20%)", requiredValue = 1200000001, endRange = 1800000000 },
@@ -499,12 +502,14 @@ end
 local function assignQuest()
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
 
-    local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
+    local currentMissions = getCurrentMissions()
+    local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat, currentMissions)
     local previousQuest, previousMob = nil, nil
 
+    -- Récupérer la quête précédente, si disponible
     if questIndex and questIndex > 1 then
-        previousQuest = missions[questIndex - 1].name
-        previousMob = missions[questIndex - 1].bossName
+        previousQuest = currentMissions[questIndex - 1].name
+        previousMob = currentMissions[questIndex - 1].bossName
     end
 
     if not currentQuest then
@@ -512,6 +517,7 @@ local function assignQuest()
         return
     end
 
+    -- Sélectionner la quête principale ou la précédente en fonction de l'alternance
     if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
         SelectedQuest = previousQuest
         SelectedMob = previousMob
@@ -523,6 +529,23 @@ local function assignQuest()
         warn("[INFO] Passage à la quête principale : " .. currentQuest)
     end
 end
+
+
+local currentPlanet = "Earth"  -- Valeur initiale, à ajuster selon l'emplacement du joueur
+
+-- Fonction pour obtenir la liste des missions en fonction de la planète actuelle
+local function getCurrentMissions()
+    if currentPlanet == "Earth" then
+        return missionsEarth
+    elseif currentPlanet == "Vills Planet" then
+        return missionsVills
+    else
+        return nil
+    end
+end
+
+
+
 
 local isTakingQuest = false
 
@@ -551,11 +574,22 @@ local function startMission()
     isTakingQuest = false
 end
 
+
+local function updatePlanet()
+    if game.PlaceId == 3311165597 then
+        currentPlanet = "Earth"
+    elseif game.PlaceId == 5151400895 then
+        currentPlanet = "Vills Planet"
+    end
+end
+
+
 task.spawn(function()
     while true do
         task.wait()
         pcall(function()
-            assignQuest()
+            updatePlanet()  -- Met à jour la planète en fonction du lieu du joueur
+            assignQuest()   -- Assigner la quête appropriée en fonction de la planète
             if game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value == "" then
                 startMission()
             end
@@ -567,33 +601,27 @@ end)
 task.spawn(function()
     while true do
         task.wait(1)
-        local success, fallo = pcall(function()
-            -- Si la puissance est inférieure à 2 milliards, téléporter vers Earth
-            if data.Strength.Value < 2000000000 and game.PlaceId ~= 3311165597 and isLoop1Active then
-                local A_1 = "Earth"
-                local Event = events.TP
-                if game.PlaceId ~= 3311165597 then  -- Vérifier si on est déjà sur Earth
-                    Event:InvokeServer(A_1)
-                    print("Teleporting to Earth")
-                end
-                task.wait(8)  -- Attendre 8 secondes avant de réévaluer
-            -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet
-            elseif data.Strength.Value >= 2000000000 and game.PlaceId ~= 5151400895 and isLoop1Active then
-                local A_1 = "Vills Planet"
-                local Event = events.TP
-                if game.PlaceId ~= 5151400895 then  -- Vérifier si on est déjà sur Vills Planet
-                    Event:InvokeServer(A_1)
+        pcall(function()
+            local zeni = game:GetService("ReplicatedStorage").Datas[player.UserId].Zeni.Value
+
+            -- Si la puissance est inférieure à 2 milliards, téléporter vers Earth (GRATUIT)
+            if data.Strength.Value < 2000000000 and game.PlaceId ~= 3311165597 then
+                events.TP:InvokeServer("Earth")
+                print("Teleporting to Earth")
+
+            -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet (15K Zeni requis)
+            elseif data.Strength.Value >= 2000000000 and game.PlaceId ~= 5151400895 then
+                if data.Zeni.Value >= 15000 then
+                    events.TP:InvokeServer("Vills Planet")
                     print("Teleporting to Vills Planet")
+                else
+                    warn("[INFO] Pas assez de Zeni pour se téléporter vers Vills Planet !")
                 end
-                task.wait(8)  -- Attendre 8 secondes avant de réévaluer
             end
         end)
-
-        if not success then
-            warn("Error executing teleportation: " .. fallo)
-        end
     end
 end)
+
 
 
 task.spawn(function()
@@ -817,7 +845,7 @@ end)
         pcall(function()
             task.spawn(function()
                 while true do
-                    task.wait(.05)
+                    task.wait()
                     
                     
                     local success, fallo = pcall(function()
@@ -849,11 +877,11 @@ end)
                             if bestTransfo and bestTransfo ~= currentTransfo then
                                 -- Se détransformer
                                 taRemote:InvokeServer()
-                                task.wait(0.5) -- Petit délai pour éviter les bugs
+                                task.wait() -- Petit délai pour éviter les bugs
     
                                 -- Équiper la nouvelle transformation
                                 equipRemote:InvokeServer(bestTransfo)
-                                task.wait(0.5)
+                                task.wait()
     
                                 -- Se re-transformer
                                 taRemote:InvokeServer()
