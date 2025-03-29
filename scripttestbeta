@@ -592,8 +592,16 @@ task.spawn(function()
                 end
                 task.wait(8)  -- Attendre 8 secondes avant de réévaluer
             -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet
-        elseif data.Strength.Value >= 200000000 and game.PlaceId ~= 5151400895 and isLoop1Active then
-            if data.Zeni.Value >= 15000 then
+        elseif data.Strength.Value >= 200000000 and game.PlaceId ~= 5151400895 and isLoop1Active and data.Zeni.Value >= 15000 then
+            local A_1 = "Vills Planet"
+            local Event = events.TP
+            if game.PlaceId ~= 5151400895 then  -- Vérifier si on est déjà sur Vills Planet
+                Event:InvokeServer(A_1)
+                print("Teleporting to Vills Planet")
+            end
+            task.wait(8)  -- Attendre 8 secondes avant de réévaluer
+        end
+        
                 local A_1 = "Vills Planet"
                 local Event = events.TP
                 if game.PlaceId ~= 5151400895 then  -- Vérifier si on est déjà sur Vills Planet
@@ -835,7 +843,7 @@ end)
                     
                     
                     local success, fallo = pcall(function()
-                        local Forms = {'Ego Instinct','Blue Divine','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
+                        local Forms = {'Ego Instinct','Divine Blue','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
                                        'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
                                        'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
                                        'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
