@@ -561,7 +561,7 @@ task.spawn(function()
                     Event:InvokeServer(A_1)
                     print("Teleporting to Earth")
                 end
-                task.wait(8)  -- Attendre 8 secondes avant de réévaluer
+                task.wait(3)  -- Attendre 8 secondes avant de réévaluer
             -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet
             elseif data.Strength.Value >= 2000000000 and game.PlaceId ~= 5151400895 then
                 local A_1 = "Vills Planet"
@@ -570,7 +570,7 @@ task.spawn(function()
                     Event:InvokeServer(A_1)
                     print("Teleporting to Vills Planet")
                 end
-                task.wait(8)  -- Attendre 8 secondes avant de réévaluer
+                task.wait(3)  -- Attendre 8 secondes avant de réévaluer
             end
         end)
 
