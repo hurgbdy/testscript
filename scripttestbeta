@@ -470,15 +470,16 @@ local missions = {
     },
 
     VillsPlanet = {
-        { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 20000000001, endRange = 1200000000 },
-        { name = "Vis (20%)", bossName = "Vis (20%)", requiredValue = 1200000001, endRange = 1800000000 },
-        { name = "Vegetable (LBSSJ4)", bossName = "Vegetable (LBSSJ4)", requiredValue = 1800000001, endRange = 2700000000 },
-        { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2700000001, endRange = 4200000000 },
-        { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
-        { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 5500000000 },
-        { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 5500000001, endRange = math.huge }
+        { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 2000000001, endRange = 3000000000 },
+        { name = "Vis (20%)", bossName = "Vis (20%)", requiredValue = 3000000001, endRange = 6000000000 },
+        { name = "Vegetable (LBSSJ4)", bossName = "Vegetable (LBSSJ4)", requiredValue = 6000000001, endRange = 12000000000 },
+        { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 12000000001, endRange = 18000000000 },
+        { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 18000000001, endRange = 25000000000 },
+        { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 25000000001, endRange = 30000000000 },
+        { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 30000000001, endRange = math.huge }
     }
 }
+
 
 
 local SelectedQuest
