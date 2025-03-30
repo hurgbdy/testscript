@@ -427,10 +427,10 @@ end
     pcall(function()
         if isActive then
             switchBall.Position = UDim2.new(1, -35, 0.5, -15)
-            switchBall.BackgroundColor3 = Color3.fromRGB(160, 32, 240)
+            switchBall.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         else
             switchBall.Position = UDim2.new(0, 5, 0.5, -15)
-            switchBall.BackgroundColor3 = Color3.fromRGB(128, 0, 255)
+            switchBall.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         end
     end)
 end
@@ -454,34 +454,14 @@ local data = game.ReplicatedStorage.Datas[player.UserId]
 local events = game:GetService("ReplicatedStorage").Package.Events
 
 local missions = {
-    Earth = {
-        { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
-        { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
-        { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 200000 },
-        { name = "Mapa", bossName = "Mapa", requiredValue = 200001, endRange = 300000 },
-        { name = "Citizen", bossName = "Evil Saya", requiredValue = 300001, endRange = 400000 },
-        { name = "Top X Fighter", bossName = "X Fighter Master", requiredValue = 400001, endRange = 700000 },
-        { name = "Super Vegetable", bossName = "Super Vegetable", requiredValue = 700001, endRange = 1200000 },
-        { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 1200001, endRange = 5000000 },
-        { name = "SSJ2 Wukong", bossName = "SSJ2 Wukong", requiredValue = 5000001, endRange = 8000000 },
-        { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 8000001, endRange = 50000000 },
-        { name = "Broccoli", bossName = "Broccoli", requiredValue = 50000001, endRange = 150000000 },
-        { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 150000001, endRange = 2000000000}
-    },
-
-    VillsPlanet = {
-        { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 2000000001, endRange = 3000000000 },
-        { name = "Vis (20%)", bossName = "Vis (20%)", requiredValue = 3000000001, endRange = 6000000000 },
-        { name = "Vegetable (LBSSJ4)", bossName = "Vegetable (LBSSJ4)", requiredValue = 6000000001, endRange = 12000000000 },
-        { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 12000000001, endRange = 18000000000 },
-        { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 18000000001, endRange = 25000000000 },
-        { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 25000000001, endRange = 30000000000 },
-        { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 30000000001, endRange = math.huge }
-    }
+    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 3500000 },
+    { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500000, endRange = 10000000 },
+    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
+    { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
+    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = 2000000000 },
+    { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 2000000001, endRange = 5500000001 },
+    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 5500000001, endRange = math.huge },
 }
-
-
-
 
 local SelectedQuest
 local SelectedMob
@@ -489,14 +469,12 @@ local isDoingAlternateQuest = false
 
 local function BossIsAlive(mobName)
     local boss = game.Workspace.Living:FindFirstChild(mobName)
-    return boss and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0
+    return boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0
 end
 
--- Fonction pour obtenir une quête en fonction de la statistique
-local function getQuestByStat(stat, currentMissions)
-    for i, mission in ipairs(currentMissions) do
+local function getQuestByStat(stat)
+    for i, mission in ipairs(missions) do
         if stat >= mission.requiredValue and stat <= mission.endRange then
-            print("[DEBUG] Quest trouvé : " .. mission.name .. " avec boss " .. mission.bossName)
             return mission.name, mission.bossName, i
         end
     end
@@ -504,49 +482,32 @@ local function getQuestByStat(stat, currentMissions)
 end
 
 local function assignQuest()
-    updatePlanet()  -- Met à jour la planète
-    print("[DEBUG] Planète mise à jour.")
-
-    local currentMissions = getCurrentMissions()
-    if not currentMissions then
-        warn("[INFO] Aucune mission disponible.")
-        return
-    end
-
-    -- Exemple de récupération de la stat la plus faible
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
-    print("[DEBUG] Statistique la plus faible : " .. lowestStat)
 
-    local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat, currentMissions)
+    local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
+    local previousQuest, previousMob = nil, nil
+
+    if questIndex and questIndex > 1 then
+        previousQuest = missions[questIndex - 1].name
+        previousMob = missions[questIndex - 1].bossName
+    end
 
     if not currentQuest then
         warn("[INFO] Aucune quête disponible pour cette stat.")
-        return  -- Arrête la fonction ici
+        return
     end
-    
-    -- Logique pour choisir la quête principale ou une quête alternative (selon l'état du boss)
-    SelectedQuest = currentQuest
-    SelectedMob = currentMob
-    warn("[INFO] Passage à la quête principale : " .. currentQuest)
-end
 
-
-
-
-local function getCurrentMissions()
-    print("[DEBUG] Récupération des missions pour la planète : " .. (currentPlanet or "Non définie"))
-    if currentPlanet == "Earth" then
-        return missions.Earth
-    elseif currentPlanet == "VillsPlanet" then
-        return missions.VillsPlanet
+    if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
+        SelectedQuest = previousQuest
+        SelectedMob = previousMob
+        warn("[INFO] Passage à la quête précédente : " .. previousQuest)
     else
-        warn("[DEBUG] Planète non définie. Aucune mission trouvée.")
-        return nil
+        SelectedQuest = currentQuest
+        SelectedMob = currentMob
+        isDoingAlternateQuest = not isDoingAlternateQuest
+        warn("[INFO] Passage à la quête principale : " .. currentQuest)
     end
 end
-
-
-
 
 local isTakingQuest = false
 
@@ -555,74 +516,33 @@ local function startMission()
     isTakingQuest = true
 
     pcall(function()
-        if not SelectedQuest then
-            warn("[ERREUR] Aucune quête sélectionnée.")
-            isTakingQuest = false
-            return
-        end
-
         local questValue = game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value
+
         if questValue == SelectedQuest then
             isTakingQuest = false
             return
         end
 
         local npc = game:GetService("Workspace").Others.NPCs:FindFirstChild(SelectedQuest)
-        if not npc then
-            warn("[ERREUR] NPC introuvable pour la quête : " .. SelectedQuest)
-            isTakingQuest = false
-            return
+        if npc and npc:FindFirstChild("HumanoidRootPart") and isLoop1Active then
+            player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+            task.wait()
+            events.Qaction:InvokeServer(npc)
+            warn("[INFO] Quête acceptée : " .. SelectedQuest)
         end
-
-        if not npc:FindFirstChild("HumanoidRootPart") then
-            warn("[ERREUR] HumanoidRootPart manquant pour le NPC : " .. SelectedQuest)
-            isTakingQuest = false
-            return
-        end
-
-        if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-            warn("[ERREUR] HumanoidRootPart du joueur introuvable.")
-            isTakingQuest = false
-            return
-        end
-
-        -- Déplacement du joueur vers le PNJ
-        player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-        task.wait(0.5)  -- Petit délai pour s'assurer du bon positionnement
-
-        -- Invocation de l'événement pour accepter la quête
-        events.Qaction:InvokeServer(npc)
-        warn("[INFO] Quête acceptée : " .. SelectedQuest)
     end)
 
-    task.wait(0.5)  -- Attente pour éviter de spammer
+    task.wait()
     isTakingQuest = false
 end
-
-
-
-local currentPlanet = ""
-local function updatePlanet()
-    if game.PlaceId == 3311165597 then  -- ID de Planet Earth
-        currentPlanet = "Earth"
-        print("[DEBUG] Planète actuelle : Earth")
-    elseif game.PlaceId == 5151400895 then  -- ID de Vills Planet
-        currentPlanet = "VillsPlanet"
-        print("[DEBUG] Planète actuelle : Vills Planet")
-    else
-        currentPlanet = ""
-        warn("[DEBUG] Aucune planète détectée (PlaceId non reconnu)")
-    end
-end
-
 
 task.spawn(function()
     while true do
         task.wait()
         pcall(function()
-            assignQuest()  -- Met à jour et assigne la quête
+            assignQuest()
             if game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value == "" then
-                startMission()  -- Lance la mission si la quête est vide
+                startMission()
             end
         end)
     end
@@ -632,28 +552,33 @@ end)
 task.spawn(function()
     while true do
         task.wait(1)
-        pcall(function()
-            local zeni = game:GetService("ReplicatedStorage").Datas[player.UserId].Zeni.Value
-
-            -- Si la puissance est inférieure à 2 milliards, téléporter vers Earth (GRATUIT)
+        local success, fallo = pcall(function()
+            -- Si la puissance est inférieure à 2 milliards, téléporter vers Earth
             if data.Strength.Value < 2000000000 and game.PlaceId ~= 3311165597 then
-                events.TP:InvokeServer("Earth")
-                print("Teleporting to Earth")
-
-            -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet (15K Zeni requis)
-            elseif data.Strength.Value >= 2000000000 and game.PlaceId ~= 5151400895 then
-                if data.Zeni.Value >= 15000 then
-                    events.TP:InvokeServer("Vills Planet")
-                    print("Teleporting to Vills Planet")
-                else
-                    warn("[INFO] Pas assez de Zeni pour se téléporter vers Vills Planet !")
+                local A_1 = "Earth"
+                local Event = events.TP
+                if game.PlaceId ~= 3311165597 then  -- Vérifier si on est déjà sur Earth
+                    Event:InvokeServer(A_1)
+                    print("Teleporting to Earth")
                 end
+                task.wait(8)  -- Attendre 8 secondes avant de réévaluer
+            -- Si la puissance est supérieure ou égale à 2 milliards, téléporter vers Vills Planet
+            elseif data.Strength.Value >= 2000000000 and game.PlaceId ~= 5151400895 then
+                local A_1 = "Vills Planet"
+                local Event = events.TP
+                if game.PlaceId ~= 5151400895 then  -- Vérifier si on est déjà sur Vills Planet
+                    Event:InvokeServer(A_1)
+                    print("Teleporting to Vills Planet")
+                end
+                task.wait(8)  -- Attendre 8 secondes avant de réévaluer
             end
         end)
+
+        if not success then
+            warn("Error executing teleportation: " .. fallo)
+        end
     end
 end)
-
-
 
 task.spawn(function()
     while true do
@@ -684,7 +609,6 @@ spawn(function()
 end)
 
 
-
 task.spawn(function()
     while true do
         task.wait()
@@ -692,93 +616,21 @@ task.spawn(function()
             local player = game.Players.LocalPlayer
             local data = game.ReplicatedStorage.Datas[player.UserId]
             local mission = data.Quest.Value
+            local boss = game.Workspace.Living:FindFirstChild(mission)
 
-            -- Vérifier que le joueur existe bien
-            if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-                
-                return
-            end
 
-            -- Trouver le bon nom du boss à partir de la mission
-            local bossName
-            for _, quest in ipairs(missions) do
-                if quest.name == mission then
-                    bossName = quest.bossName
-                    break
-                end
-            end
+            if boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
+                player.Status.Blocking.Value = true  
 
-            if not bossName then
-                
-                return
-            end
+                -- Récupérer l'orientation de l'ennemi et se positionner derrière
+                local enemyHRP = boss.HumanoidRootPart
+                local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 5) -- 4 unités derrière lui
 
-            -- Trouver tous les boss avec le bon nom
-            local bossCount = 0
-            for _, boss in ipairs(game.Workspace.Living:GetChildren()) do
-                if boss.Name == bossName and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
-                    bossCount = bossCount + 1
-                    player.Status.Blocking.Value = false  
-
-                    -- Position fixe derrière le boss (0, 0, 4)
-                    local enemyHRP = boss.HumanoidRootPart
-                    local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
-
-                    -- Téléporter le joueur et afficher les informations
-                    player.Character.HumanoidRootPart.CFrame = behindPosition
-                    
-
-                    task.wait() -- Attendre un peu avant de passer au suivant
-                end
-            end
-
-            -- Vérifier si des boss ont été trouvés
-            if bossCount == 0 then
-                
-            else
-               
+                player.Character.HumanoidRootPart.CFrame = behindPosition
             end
         end)
     end
 end)
-
-
-
-
-
-local player = game.Players.LocalPlayer
-
-local function enableZeroGravity(character)
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    
-    local zeroGravity = Instance.new("BodyForce")
-    zeroGravity.Force = Vector3.new(0, workspace.Gravity * humanoidRootPart.AssemblyMass, 0)
-    zeroGravity.Parent = humanoidRootPart
-end
-
-local function onCharacterAdded(character)
-    -- Attendre que le personnage respawn et se charger
-    character:WaitForChild("Humanoid")
-    
-    -- Appliquer l'effet de gravité zéro
-    enableZeroGravity(character)
-    
-    -- Réactiver l'effet de gravité zéro quand le personnage meurt
-    character:WaitForChild("Humanoid").Died:Connect(function()
-        enableZeroGravity(character)
-    end)
-end
-
--- Connecter l'événement CharacterAdded pour réagir au respawn
-player.CharacterAdded:Connect(onCharacterAdded)
-
--- Si le joueur est déjà en jeu, on active immédiatement l'effet
-if player.Character then
-    onCharacterAdded(player.Character)
-end
-
-
-
 
 
 
@@ -872,62 +724,70 @@ end)
         end
     end
 
-    local function loop3()
-        pcall(function()
-            task.spawn(function()
-                while true do
-                    task.wait()
-                    
-                    
-                    local success, fallo = pcall(function()
-                        local Forms = {'Ego Instinct','Divine Blue','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
-                                       'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
-                                       'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
-                                       'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
-                                       'SSJ Rage','SSJG','SSJ4','Mystic','LSSJ','SSJ3','Spirit SSJ','SSJ2 Majin','SSJ2','SSJ Kaioken','SSJ','FSSJ','Kaioken'}
-    
-                        local equipRemote = game:GetService("ReplicatedStorage").Package.Events.equipskill
-                        local taRemote = game:GetService("ReplicatedStorage").Package.Events.ta
-                        local player = game:GetService("Players").LocalPlayer
-                        local stats = player.Character:WaitForChild("Stats")
-    
-                        -- Vérification des stats pour autoriser la transformation
-                        if stats.Strength.Value > 5000 and stats.Defense.Value > 5000 and stats.Energy.Value > 5000 and stats.Speed.Value > 5000 then
-                            local currentTransfo = player.Status.Transformation.Value
-                            local bestTransfo = nil
-    
-                            -- Trouver la meilleure transformation disponible selon les stats
-                            for _, v in ipairs(Forms) do
-                                if equipRemote:InvokeServer(v) then
-                                    bestTransfo = v
-                                    break
-                                end
+ local function loop3()
+        pcall(function()                   
+       task.spawn(function()
+    while true do
+        task.wait(.05)
+
+        local succes, fallo = pcall(function()
+            local Forms = {'Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
+                           'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
+                           'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
+                           'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
+                           'SSJ Rage','SSJG','SSJ4','Mystic','LSSJ','SSJ3','Spirit SSJ','SSJ2 Majin','SSJ2','SSJ Kaioken','SSJ','FSSJ','Kaioken'}
+
+            local equipRemote = game:GetService("ReplicatedStorage").Package.Events.equipskill
+            local player = game:GetService("Players").LocalPlayer
+
+            local function transform()
+                task.spawn(function()
+                    for i, v in pairs(Forms) do
+                        if equipRemote:InvokeServer(v) then
+                            break
+                        end
+                    end
+
+                    repeat
+                        task.wait()
+                        local success1 = pcall(function()
+                            if player.Status.SelectedTransformation.Value ~= player.Status.Transformation.Value then
+                                game:GetService("ReplicatedStorage").Package.Events.ta:InvokeServer()
                             end
-    
-                            -- Vérifie si la transformation actuelle est déjà la meilleure
-                            if bestTransfo and bestTransfo ~= currentTransfo then
-                                -- Se détransformer
-                                taRemote:InvokeServer()
-                                task.wait() -- Petit délai pour éviter les bugs
-    
-                                -- Équiper la nouvelle transformation
-                                equipRemote:InvokeServer(bestTransfo)
-                                task.wait()
-    
-                                -- Se re-transformer
-                                taRemote:InvokeServer()
+                        end)
+
+                        if not success1 then
+                            local success2 = pcall(function()
+                                if game.Workspace.Living[player.Name].Status.SelectedTransformation.Value ~= game.Workspace.Living[player.Name].Status.Transformation.Value then
+                                    game:GetService("ReplicatedStorage").Package.Events.ta:InvokeServer()
+                                end
+                            end)
+
+                            if not success2 then
+                                warn("Ambos métodos fallaron al verificar las transformaciones.")
                             end
                         end
-                    end)
-    
-                    if not success then
-                        warn(fallo)
-                    end
-                end
-            end)
+                    until game.Workspace.Living[player.Name].Status.SelectedTransformation.Value ==
+                        game.Workspace.Living[player.Name].Status.Transformation.Value
+                end)
+            end
+
+            local stats = player.Character:WaitForChild("Stats")
+            if stats.Strength.Value > 5000 and stats.Defense.Value > 5000 and stats.Energy.Value > 5000 and stats.Speed.Value > 5000 then
+                transform()
+            end
+        end)
+
+        if not succes then
+            warn(fallo)
+        end
+    end
+end)
+
+
+        task.wait(.1)
         end)
     end
-    
 
     local function loop5()
         while true do
