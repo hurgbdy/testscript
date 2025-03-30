@@ -470,9 +470,7 @@ local missions = {
     },
 
     VillsPlanet = {
-        { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 2000000001, endRange = 300000000 },
-        { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 300000001, endRange = 600000000 },
-        { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 600000001, endRange = 1200000000 },
+        { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 20000000001, endRange = 1200000000 },
         { name = "Vis (20%)", bossName = "Vis (20%)", requiredValue = 1200000001, endRange = 1800000000 },
         { name = "Vegetable (LBSSJ4)", bossName = "Vegetable (LBSSJ4)", requiredValue = 1800000001, endRange = 2700000000 },
         { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2700000001, endRange = 4200000000 },
