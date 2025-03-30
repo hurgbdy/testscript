@@ -423,14 +423,14 @@ local function LoadSwitchState(switchName)
     end
 end
 
-    local function toggleSwitch(isActive, switchBall)
+local function toggleSwitch(isActive, switchBall)
     pcall(function()
         if isActive then
             switchBall.Position = UDim2.new(1, -35, 0.5, -15)
             switchBall.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         else
             switchBall.Position = UDim2.new(0, 5, 0.5, -15)
-            switchBall.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            switchBall.BackgroundColor3 = Color3.fromRGB(128, 0, 255)
         end
     end)
 end
@@ -616,21 +616,87 @@ task.spawn(function()
             local player = game.Players.LocalPlayer
             local data = game.ReplicatedStorage.Datas[player.UserId]
             local mission = data.Quest.Value
-            local boss = game.Workspace.Living:FindFirstChild(mission)
 
+            -- Vérifier que le joueur existe bien
+            if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
+                warn("⚠️ ERREUR: Le joueur ou son HumanoidRootPart est introuvable !")
+                return
+            end
 
-            if boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
-                player.Status.Blocking.Value = true  
+            -- Trouver le bon nom du boss à partir de la mission
+            local bossName
+            for _, quest in ipairs(missions) do
+                if quest.name == mission then
+                    bossName = quest.bossName
+                    break
+                end
+            end
 
-                -- Récupérer l'orientation de l'ennemi et se positionner derrière
-                local enemyHRP = boss.HumanoidRootPart
-                local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 5) -- 4 unités derrière lui
+            if not bossName then
+                warn("⚠️ Aucun boss correspondant trouvé pour la mission:", mission)
+                return
+            end
 
-                player.Character.HumanoidRootPart.CFrame = behindPosition
+            -- Trouver tous les boss avec le bon nom
+            local bossCount = 0
+            for _, boss in ipairs(game.Workspace.Living:GetChildren()) do
+                if boss.Name == bossName and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
+                    bossCount = bossCount + 1
+                    player.Status.Blocking.Value = false  
+
+                    -- Position fixe derrière le boss (0, 0, 4)
+                    local enemyHRP = boss.HumanoidRootPart
+                    local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
+
+                    -- Téléporter le joueur et afficher les informations
+                    player.Character.HumanoidRootPart.CFrame = behindPosition
+                    warn("✅ Joueur téléporté derrière le boss:", boss.Name, " | Position:", behindPosition.Position)
+
+                    task.wait() -- Attendre un peu avant de passer au suivant
+                end
+            end
+
+            -- Vérifier si des boss ont été trouvés
+            if bossCount == 0 then
+                warn("⚠️ Aucun boss trouvé avec le nom:", bossName)
+            else
+                warn("✅ Nombre total de boss traités:", bossCount)
             end
         end)
     end
 end)
+
+
+local player = game.Players.LocalPlayer
+
+local function enableZeroGravity(character)
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    
+    local zeroGravity = Instance.new("BodyForce")
+    zeroGravity.Force = Vector3.new(0, workspace.Gravity * humanoidRootPart.AssemblyMass, 0)
+    zeroGravity.Parent = humanoidRootPart
+end
+
+local function onCharacterAdded(character)
+    -- Attendre que le personnage respawn et se charger
+    character:WaitForChild("Humanoid")
+    
+    -- Appliquer l'effet de gravité zéro
+    enableZeroGravity(character)
+    
+    -- Réactiver l'effet de gravité zéro quand le personnage meurt
+    character:WaitForChild("Humanoid").Died:Connect(function()
+        enableZeroGravity(character)
+    end)
+end
+
+-- Connecter l'événement CharacterAdded pour réagir au respawn
+player.CharacterAdded:Connect(onCharacterAdded)
+
+-- Si le joueur est déjà en jeu, on active immédiatement l'effet
+if player.Character then
+    onCharacterAdded(player.Character)
+end
 
 
 
@@ -724,70 +790,63 @@ end)
         end
     end
 
- local function loop3()
-        pcall(function()                   
-       task.spawn(function()
-    while true do
-        task.wait(.05)
-
-        local succes, fallo = pcall(function()
-            local Forms = {'Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
-                           'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
-                           'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
-                           'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
-                           'SSJ Rage','SSJG','SSJ4','Mystic','LSSJ','SSJ3','Spirit SSJ','SSJ2 Majin','SSJ2','SSJ Kaioken','SSJ','FSSJ','Kaioken'}
-
-            local equipRemote = game:GetService("ReplicatedStorage").Package.Events.equipskill
-            local player = game:GetService("Players").LocalPlayer
-
-            local function transform()
-                task.spawn(function()
-                    for i, v in pairs(Forms) do
-                        if equipRemote:InvokeServer(v) then
-                            break
-                        end
-                    end
-
-                    repeat
-                        task.wait()
-                        local success1 = pcall(function()
-                            if player.Status.SelectedTransformation.Value ~= player.Status.Transformation.Value then
-                                game:GetService("ReplicatedStorage").Package.Events.ta:InvokeServer()
-                            end
-                        end)
-
-                        if not success1 then
-                            local success2 = pcall(function()
-                                if game.Workspace.Living[player.Name].Status.SelectedTransformation.Value ~= game.Workspace.Living[player.Name].Status.Transformation.Value then
-                                    game:GetService("ReplicatedStorage").Package.Events.ta:InvokeServer()
+    local function loop3()
+        pcall(function()
+            task.spawn(function()
+                while true do
+                    task.wait()
+                    
+                    
+                    local success, fallo = pcall(function()
+                        local Forms = {'Ego Instinct','Divine Blue','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
+                                       'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
+                                       'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
+                                       'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
+                                       'SSJ Rage','SSJG','SSJ4','Mystic','LSSJ','SSJ3','Spirit SSJ','SSJ2 Majin','SSJ2','SSJ Kaioken','SSJ','FSSJ','Kaioken'}
+    
+                        local equipRemote = game:GetService("ReplicatedStorage").Package.Events.equipskill
+                        local taRemote = game:GetService("ReplicatedStorage").Package.Events.ta
+                        local player = game:GetService("Players").LocalPlayer
+                        local stats = player.Character:WaitForChild("Stats")
+    
+                        -- Vérification des stats pour autoriser la transformation
+                        if stats.Strength.Value > 5000 and stats.Defense.Value > 5000 and stats.Energy.Value > 5000 and stats.Speed.Value > 5000 then
+                            local currentTransfo = player.Status.Transformation.Value
+                            local bestTransfo = nil
+    
+                            -- Trouver la meilleure transformation disponible selon les stats
+                            for _, v in ipairs(Forms) do
+                                if equipRemote:InvokeServer(v) then
+                                    bestTransfo = v
+                                    break
                                 end
-                            end)
-
-                            if not success2 then
-                                warn("Ambos métodos fallaron al verificar las transformaciones.")
+                            end
+    
+                            -- Vérifie si la transformation actuelle est déjà la meilleure
+                            if bestTransfo and bestTransfo ~= currentTransfo then
+                                -- Se détransformer
+                                taRemote:InvokeServer()
+                                task.wait() -- Petit délai pour éviter les bugs
+    
+                                -- Équiper la nouvelle transformation
+                                equipRemote:InvokeServer(bestTransfo)
+                                task.wait()
+    
+                                -- Se re-transformer
+                                taRemote:InvokeServer()
                             end
                         end
-                    until game.Workspace.Living[player.Name].Status.SelectedTransformation.Value ==
-                        game.Workspace.Living[player.Name].Status.Transformation.Value
-                end)
-            end
-
-            local stats = player.Character:WaitForChild("Stats")
-            if stats.Strength.Value > 5000 and stats.Defense.Value > 5000 and stats.Energy.Value > 5000 and stats.Speed.Value > 5000 then
-                transform()
-            end
-        end)
-
-        if not succes then
-            warn(fallo)
-        end
-    end
-end)
-
-
-        task.wait(.1)
+                    end)
+    
+                    if not success then
+                        warn(fallo)
+                    end
+                end
+            end)
         end)
     end
+    
+
 
     local function loop5()
         while true do
