@@ -453,25 +453,41 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
 local data = game.ReplicatedStorage.Datas[player.UserId]
 local events = game:GetService("ReplicatedStorage").Package.Events
 
-local missions = {
+-- Liste de missions pour le jeu avec l'ID 3311165597
+local missions_3311165597 = {
     { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
     { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
     { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 3500000 },
     { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500001, endRange = 10000000 },
     { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
     { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
-    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge },
+    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = 2000000000 }
+}
+
+-- Liste de missions pour le jeu avec l'ID 5151400895
+local missions_5151400895 = {
     { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2000000001, endRange = 4200000000 },
     { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
     { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
-    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge },
+    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
 }
 
+-- Variable pour stocker la liste des missions active
+local missions = {}
+
+-- Vérifie l'ID du jeu et charge la bonne liste de missions
+if game.PlaceId == 3311165597 then
+    missions = missions_3311165597
+elseif game.PlaceId == 5151400895 then
+    missions = missions_5151400895
+else
+    missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
+end
+
+-- Le reste de ton code où tu utilises la liste `missions`
 local SelectedQuest
 local SelectedMob
 local isDoingAlternateQuest = false
-local lastValidQuest = nil
-local lastValidMob = nil
 
 local function BossIsAlive(mobName)
     local boss = game.Workspace.Living:FindFirstChild(mobName)
@@ -479,47 +495,39 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
-    for i = #missions, 1, -1 do
-        if stat >= missions[i].requiredValue then
-            return missions[i], missions[i - 1]
+    for i, mission in ipairs(missions) do
+        if stat >= mission.requiredValue and stat <= mission.endRange then
+            return mission.name, mission.bossName, i
         end
     end
-    return nil, nil
+    return nil, nil, nil
 end
 
 local function assignQuest()
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
-    local currentMission, previousMission = getQuestByStat(lowestStat)
-    
-    if not currentMission then
+
+    local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
+    local previousQuest, previousMob = nil, nil
+
+    if questIndex and questIndex > 1 then
+        previousQuest = missions[questIndex - 1].name
+        previousMob = missions[questIndex - 1].bossName
+    end
+
+    if not currentQuest then
         warn("[INFO] Aucune quête disponible pour cette stat.")
         return
     end
-    
-    -- Si la quête principale est disponible dans le monde actuel
-    if game:GetService("Workspace").Others.NPCs:FindFirstChild(currentMission.name) then
-        -- Si on peut faire la quête principale
-        SelectedQuest = currentMission.name
-        SelectedMob = currentMission.bossName
-        isDoingAlternateQuest = previousMission ~= nil
-        warn("[INFO] Passage à la quête principale : " .. currentMission.name)
-        lastValidQuest = SelectedQuest
-        lastValidMob = SelectedMob
+
+    if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
+        SelectedQuest = previousQuest
+        SelectedMob = previousMob
+        warn("[INFO] Passage à la quête précédente : " .. previousQuest)
     else
-        -- Sinon, maintenir la quête précédente (si elle est valide et peut être alternée)
-        if previousMission and BossIsAlive(previousMission.bossName) then
-            SelectedQuest = previousMission.name
-            SelectedMob = previousMission.bossName
-            isDoingAlternateQuest = true
-            warn("[INFO] Passage à la quête précédente : " .. previousMission.name)
-        elseif lastValidQuest and lastValidMob then
-            SelectedQuest = lastValidQuest
-            SelectedMob = lastValidMob
-            warn("[INFO] Monde différent, maintien de la quête précédente : " .. lastValidQuest)
-        else
-            -- Si aucune quête précédente n'est valide, continuez sans changer
-            warn("[INFO] Impossible de trouver une quête à faire.")
-        end
+        SelectedQuest = currentQuest
+        SelectedMob = currentMob
+        isDoingAlternateQuest = not isDoingAlternateQuest
+        warn("[INFO] Passage à la quête principale : " .. currentQuest)
     end
 end
 
@@ -538,7 +546,7 @@ local function startMission()
         end
 
         local npc = game:GetService("Workspace").Others.NPCs:FindFirstChild(SelectedQuest)
-        if npc and npc:FindFirstChild("HumanoidRootPart") and isLoop1Active then
+        if npc and npc:FindFirstChild("HumanoidRootPart") then
             player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
             task.wait()
             events.Qaction:InvokeServer(npc)
@@ -561,6 +569,8 @@ task.spawn(function()
         end)
     end
 end)
+
+ 
 
 
 
