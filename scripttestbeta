@@ -477,34 +477,36 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
-    local highestQuest, previousQuest = nil, nil
+    local currentQuest, previousQuest = nil, nil
     for i, mission in ipairs(missions) do
         if stat >= mission.requiredValue and stat <= mission.endRange then
-            previousQuest = highestQuest
-            highestQuest = mission
+            if currentQuest then
+                previousQuest = currentQuest
+            end
+            currentQuest = mission
         end
     end
-    return highestQuest and highestQuest.name, highestQuest and highestQuest.bossName, previousQuest and previousQuest.name, previousQuest and previousQuest.bossName
+    return currentQuest, previousQuest
 end
 
 local function assignQuest()
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
-    local currentQuest, currentMob, previousQuest, previousMob = getQuestByStat(lowestStat)
+    local currentMission, previousMission = getQuestByStat(lowestStat)
     
-    if not currentQuest then
+    if not currentMission then
         warn("[INFO] Aucune quête disponible pour cette stat.")
         return
     end
     
-    if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
-        SelectedQuest = previousQuest
-        SelectedMob = previousMob
-        warn("[INFO] Passage à la quête précédente : " .. previousQuest)
+    if isDoingAlternateQuest and previousMission and BossIsAlive(previousMission.bossName) then
+        SelectedQuest = previousMission.name
+        SelectedMob = previousMission.bossName
+        warn("[INFO] Passage à la quête précédente : " .. previousMission.name)
     else
-        SelectedQuest = currentQuest
-        SelectedMob = currentMob
-        isDoingAlternateQuest = not isDoingAlternateQuest
-        warn("[INFO] Passage à la quête principale : " .. currentQuest)
+        SelectedQuest = currentMission.name
+        SelectedMob = currentMission.bossName
+        isDoingAlternateQuest = previousMission ~= nil
+        warn("[INFO] Passage à la quête principale : " .. currentMission.name)
     end
 end
 
@@ -546,6 +548,7 @@ task.spawn(function()
         end)
     end
 end)
+
 
 
 
@@ -1218,7 +1221,7 @@ pcall(function()
                                 end)
 
                                 task.spawn(function()
-                                    if closestBoss and closestDistance <= 5 and closestBoss.Humanoid.Health > 0 then
+                                    if closestBoss and closestDistance <= 3 and closestBoss.Humanoid.Health > 0 then
                                         local attacks = {
                                             
                                                 "Super Dragon Fist", "God Slicer", "Spirit Barrage", "Mach Kick",
