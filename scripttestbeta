@@ -507,18 +507,19 @@ local function assignQuest()
         lastValidMob = SelectedMob
     else
         -- Sinon, maintenir la quête précédente (si elle est valide et peut être alternée)
-        if lastValidQuest and lastValidMob then
+        if previousMission and BossIsAlive(previousMission.bossName) then
+            SelectedQuest = previousMission.name
+            SelectedMob = previousMission.bossName
+            isDoingAlternateQuest = true
+            warn("[INFO] Passage à la quête précédente : " .. previousMission.name)
+        elseif lastValidQuest and lastValidMob then
             SelectedQuest = lastValidQuest
             SelectedMob = lastValidMob
             warn("[INFO] Monde différent, maintien de la quête précédente : " .. lastValidQuest)
+        else
+            -- Si aucune quête précédente n'est valide, continuez sans changer
+            warn("[INFO] Impossible de trouver une quête à faire.")
         end
-    end
-
-    -- Si on doit alterner avec la quête précédente et que le boss est vivant
-    if isDoingAlternateQuest and previousMission and BossIsAlive(previousMission.bossName) then
-        SelectedQuest = previousMission.name
-        SelectedMob = previousMission.bossName
-        warn("[INFO] Passage à la quête précédente : " .. previousMission.name)
     end
 end
 
