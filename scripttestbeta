@@ -552,6 +552,7 @@ end)
 
 
 
+
 task.spawn(function()
     while true do
         task.wait(0.5)  -- Vérification toutes les 0.5 secondes
@@ -1221,7 +1222,7 @@ pcall(function()
                                 end)
 
                                 task.spawn(function()
-                                    if closestBoss and closestDistance <= 3 and closestBoss.Humanoid.Health > 0 then
+                                    if closestBoss and closestDistance <= 5 and closestBoss.Humanoid.Health > 0 then
                                         local attacks = {
                                             
                                                 "Super Dragon Fist", "God Slicer", "Spirit Barrage", "Mach Kick",
