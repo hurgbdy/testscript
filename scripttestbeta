@@ -477,16 +477,12 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
-    local currentQuest, previousQuest = nil, nil
-    for i, mission in ipairs(missions) do
-        if stat >= mission.requiredValue and stat <= mission.endRange then
-            if currentQuest then
-                previousQuest = currentQuest
-            end
-            currentQuest = mission
+    for i = #missions, 1, -1 do
+        if stat >= missions[i].requiredValue then
+            return missions[i], missions[i - 1]
         end
     end
-    return currentQuest, previousQuest
+    return nil, nil
 end
 
 local function assignQuest()
@@ -548,9 +544,6 @@ task.spawn(function()
         end)
     end
 end)
-
-
-
 
 
 task.spawn(function()
