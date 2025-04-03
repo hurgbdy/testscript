@@ -477,13 +477,24 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
+    local bestQuest, bestMob, bestIndex = nil, nil, nil
+
     for i, mission in ipairs(missions) do
         if stat >= mission.requiredValue and stat <= mission.endRange then
-            return mission.name, mission.bossName, i
+            -- Vérifie si une meilleure quête existe avant d'assigner SSJG Kakata
+            if mission.name == "SSJG Kakata" then
+                local nextMission = missions[i + 1]
+                if nextMission and stat >= nextMission.requiredValue then
+                    continue -- Ignore SSJG Kakata si une quête plus élevée est dispo
+                end
+            end
+
+            bestQuest, bestMob, bestIndex = mission.name, mission.bossName, i
         end
     end
-    return nil, nil, nil
+    return bestQuest, bestMob, bestIndex
 end
+
 
 local function assignQuest()
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
