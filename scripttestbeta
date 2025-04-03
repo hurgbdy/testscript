@@ -496,28 +496,30 @@ local function assignQuest()
         return
     end
     
-    if not game:GetService("Workspace").Others.NPCs:FindFirstChild(currentMission.name) then
+    -- Si la quête principale est disponible dans le monde actuel
+    if game:GetService("Workspace").Others.NPCs:FindFirstChild(currentMission.name) then
+        -- Si on peut faire la quête principale
+        SelectedQuest = currentMission.name
+        SelectedMob = currentMission.bossName
+        isDoingAlternateQuest = previousMission ~= nil
+        warn("[INFO] Passage à la quête principale : " .. currentMission.name)
+        lastValidQuest = SelectedQuest
+        lastValidMob = SelectedMob
+    else
+        -- Sinon, maintenir la quête précédente (si elle est valide et peut être alternée)
         if lastValidQuest and lastValidMob then
             SelectedQuest = lastValidQuest
             SelectedMob = lastValidMob
             warn("[INFO] Monde différent, maintien de la quête précédente : " .. lastValidQuest)
-            return
         end
     end
-    
+
+    -- Si on doit alterner avec la quête précédente et que le boss est vivant
     if isDoingAlternateQuest and previousMission and BossIsAlive(previousMission.bossName) then
         SelectedQuest = previousMission.name
         SelectedMob = previousMission.bossName
         warn("[INFO] Passage à la quête précédente : " .. previousMission.name)
-    else
-        SelectedQuest = currentMission.name
-        SelectedMob = currentMission.bossName
-        isDoingAlternateQuest = not isDoingAlternateQuest
-        warn("[INFO] Passage à la quête principale : " .. currentMission.name)
     end
-    
-    lastValidQuest = SelectedQuest
-    lastValidMob = SelectedMob
 end
 
 local isTakingQuest = false
@@ -558,6 +560,7 @@ task.spawn(function()
         end)
     end
 end)
+
 
 
 
