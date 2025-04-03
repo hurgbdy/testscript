@@ -460,7 +460,7 @@ local missions = {
     { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500001, endRange = 10000000 },
     { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
     { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
-    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = 2000000000 },
+    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge },
     { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2000000001, endRange = 4200000000 },
     { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
     { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
@@ -498,11 +498,6 @@ local function assignQuest()
 
     if not currentQuest then
         warn("[INFO] Aucune quête disponible pour cette stat.")
-        return
-    end
-
-    if not BossIsAlive(currentMob) then
-        warn("[INFO] Boss introuvable pour la quête : " .. currentQuest .. ", maintien de la quête actuelle.")
         return
     end
 
@@ -556,6 +551,7 @@ task.spawn(function()
         end)
     end
 end)
+
 
 task.spawn(function()
     while true do
