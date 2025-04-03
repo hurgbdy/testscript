@@ -448,11 +448,11 @@ local isLoop6Active = safeLoadSwitchState("Switch6")
 local isLoop7Active = safeLoadSwitchState("Switch7")
 
     local function loop1()
-        pcall(function()
-          and  isLoop1Active  then           
+        pcall(function()                     
         local player = game.Players.LocalPlayer
 local data = game.ReplicatedStorage.Datas[player.UserId]
 local events = game:GetService("ReplicatedStorage").Package.Events
+ 
 -- Liste de missions pour le jeu avec l'ID 3311165597
 local missions_Planet = {
     { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
