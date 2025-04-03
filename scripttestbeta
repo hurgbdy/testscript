@@ -470,6 +470,8 @@ local missions = {
 local SelectedQuest
 local SelectedMob
 local isDoingAlternateQuest = false
+local lastValidQuest = nil
+local lastValidMob = nil
 
 local function BossIsAlive(mobName)
     local boss = game.Workspace.Living:FindFirstChild(mobName)
@@ -494,6 +496,15 @@ local function assignQuest()
         return
     end
     
+    if not game:GetService("Workspace").Others.NPCs:FindFirstChild(currentMission.name) then
+        if lastValidQuest and lastValidMob then
+            SelectedQuest = lastValidQuest
+            SelectedMob = lastValidMob
+            warn("[INFO] Monde différent, maintien de la quête précédente : " .. lastValidQuest)
+            return
+        end
+    end
+    
     if isDoingAlternateQuest and previousMission and BossIsAlive(previousMission.bossName) then
         SelectedQuest = previousMission.name
         SelectedMob = previousMission.bossName
@@ -504,6 +515,9 @@ local function assignQuest()
         isDoingAlternateQuest = previousMission ~= nil
         warn("[INFO] Passage à la quête principale : " .. currentMission.name)
     end
+    
+    lastValidQuest = SelectedQuest
+    lastValidMob = SelectedMob
 end
 
 local isTakingQuest = false
