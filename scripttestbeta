@@ -512,7 +512,7 @@ local function assignQuest()
     else
         SelectedQuest = currentMission.name
         SelectedMob = currentMission.bossName
-        isDoingAlternateQuest = previousMission ~= nil
+        isDoingAlternateQuest = not isDoingAlternateQuest
         warn("[INFO] Passage à la quête principale : " .. currentMission.name)
     end
     
@@ -558,6 +558,7 @@ task.spawn(function()
         end)
     end
 end)
+
 
 
 task.spawn(function()
