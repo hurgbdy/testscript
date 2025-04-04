@@ -1295,50 +1295,64 @@ end)
 end
 
 
-    switchButton1.MouseButton1Click:Connect(function()
-        pcall(function()
-            isLoop1Active = not isLoop1Active
-            toggleSwitch(isLoop1Active, switchBall1)
-            SaveSwitchState(isLoop1Active, "Switch1")
-        end)
-    end)
-
-
-    switchButton3.MouseButton1Click:Connect(function()
+-- Vérifie si l'état des boucles est activé avant d'exécuter les coroutines
+switchButton1.MouseButton1Click:Connect(function()
     pcall(function()
-    isLoop3Active = not isLoop3Active
-    toggleSwitch(isLoop3Active, switchBall3)
-    SaveSwitchState(isLoop3Active, "Switch3")
+        isLoop1Active = not isLoop1Active
+        toggleSwitch(isLoop1Active, switchBall1)
+        SaveSwitchState(isLoop1Active, "Switch1")
+        
+        -- Lancer la boucle 1 seulement si isLoop1Active est activé
+        if isLoop1Active then
+            coroutine.wrap(loop1)()  -- Lance la boucle
+        end
     end)
 end)
 
-    switchButton5.MouseButton1Click:Connect(function()
-        pcall(function()
-            isLoop5Active = not isLoop5Active
-            toggleSwitch(isLoop5Active, switchBall5)
-            SaveSwitchState(isLoop5Active, "Switch5")
-        end)
+switchButton3.MouseButton1Click:Connect(function()
+    pcall(function()
+        isLoop3Active = not isLoop3Active
+        toggleSwitch(isLoop3Active, switchBall3)
+        SaveSwitchState(isLoop3Active, "Switch3")
+        
+        -- Lancer la boucle 3 seulement si isLoop3Active est activé
+        if isLoop3Active then
+            coroutine.wrap(loop3)()  -- Lance la boucle
+        end
     end)
+end)
 
-
-    switchButton7.MouseButton1Click:Connect(function()
-        pcall(function()
-            isLoop7Active = not isLoop7Active
-            toggleSwitch(isLoop7Active, switchBall7)
-            SaveSwitchState(isLoop7Active, "Switch7")
-        end)
+switchButton5.MouseButton1Click:Connect(function()
+    pcall(function()
+        isLoop5Active = not isLoop5Active
+        toggleSwitch(isLoop5Active, switchBall5)
+        SaveSwitchState(isLoop5Active, "Switch5")
+        
+        -- Lancer la boucle 5 seulement si isLoop5Active est activé
+        if isLoop5Active then
+            coroutine.wrap(loop5)()  -- Lance la boucle
+        end
     end)
+end)
 
-    toggleSwitch(isLoop1Active, switchBall1)
-    toggleSwitch(isLoop3Active, switchBall3)
-    toggleSwitch(isLoop5Active, switchBall5)
-    toggleSwitch(isLoop7Active, switchBall7)
+switchButton7.MouseButton1Click:Connect(function()
+    pcall(function()
+        isLoop7Active = not isLoop7Active
+        toggleSwitch(isLoop7Active, switchBall7)
+        SaveSwitchState(isLoop7Active, "Switch7")
+        
+        -- Lancer la boucle 7 seulement si isLoop7Active est activé
+        if isLoop7Active then
+            coroutine.wrap(loop7)()  -- Lance la boucle
+        end
+    end)
+end)
 
-    coroutine.wrap(loop1)()
-    coroutine.wrap(loop3)()
-    coroutine.wrap(loop5)()
-    coroutine.wrap(loop7)()
-end
+-- Assure-toi que la GUI est initialisée avec les bons états au départ
+toggleSwitch(isLoop1Active, switchBall1)
+toggleSwitch(isLoop3Active, switchBall3)
+toggleSwitch(isLoop5Active, switchBall5)
+toggleSwitch(isLoop7Active, switchBall7)
 
 initSwitches(MenuPanel)
 
