@@ -466,6 +466,9 @@ local missions_Planet = {
 
 -- Liste de missions pour le jeu avec l'ID 5151400895
 local missions_VillsPlanet = {
+    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 350000001, endRange = 700000000 },
+    { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 700000001, endRange = 1000000000 },
+    { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 1000000001, endRange = 2000000000 },
     { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2000000001, endRange = 4200000000 },
     { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
     { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
@@ -473,16 +476,24 @@ local missions_VillsPlanet = {
 }
 
 -- Variable pour stocker la liste des missions active
-local missions = {}
+local function selectionSelectMission()
+    if not isLoop1Active then return end
 
--- Vérifie l'ID du jeu et charge la bonne liste de missions
-if game.PlaceId == 3311165597 then
-    missions = missions_Planet
-elseif game.PlaceId == 5151400895 then
-    missions = missions_VillsPlanet
-else
-    missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
+    local missions = {}
+
+    -- Vérifie l'ID du jeu et charge la bonne liste de missions
+    if game.PlaceId == 3311165597 then
+        missions = missions_Planet
+    elseif game.PlaceId == 5151400895 then
+        missions = missions_VillsPlanet
+    else
+        missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
+    end
+
+    -- Tu peux maintenant utiliser la variable `missions` ici si tu veux
+    print("[INFO] Missions chargées :", #missions)
 end
+
 
 -- Le reste de ton code où tu utilises la liste `missions`
 local SelectedQuest
@@ -579,7 +590,7 @@ task.spawn(function()
     while true do
         task.wait(0.5)  -- Vérification toutes les 0.5 secondes
         local success, fallo = pcall(function()
-            if data.Strength.Value < 2000000000 and game.PlaceId ~= 3311165597 and isLoop3Active then
+            if data.Strength.Value < 350000000 and game.PlaceId ~= 3311165597 and isLoop3Active then
                 local A_1 = "Earth"
                 local Event = events.TP
                 if game.PlaceId ~= 3311165597 then
@@ -587,7 +598,7 @@ task.spawn(function()
                     print("Teleporting to Earth")
                     task.wait(8)  -- Attendre 8 secondes après la TP pour éviter le spam
                 end
-            elseif data.Strength.Value >= 2000000000 and game.PlaceId ~= 5151400895 and isLoop3Active then
+            elseif data.Strength.Value >= 350000000 and game.PlaceId ~= 5151400895 and isLoop3Active then
                 local A_1 = "Vills Planet"
                 local Event = events.TP
                 if game.PlaceId ~= 5151400895 then
