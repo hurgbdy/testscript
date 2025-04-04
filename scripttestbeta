@@ -641,7 +641,7 @@ task.spawn(function()
         task.wait()
 
         -- On vérifie que loop1 est actif et que missions est bien rempli
-        if isLoop1Active and #missions > 0 then
+        if  #missions > 0 then
             task.spawn(function()
                 local player = game.Players.LocalPlayer
                 local data = game.ReplicatedStorage.Datas[player.UserId]
