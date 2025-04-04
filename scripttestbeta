@@ -447,140 +447,142 @@ local isLoop5Active = safeLoadSwitchState("Switch5")
 local isLoop6Active = safeLoadSwitchState("Switch6")
 local isLoop7Active = safeLoadSwitchState("Switch7")
 
-local function loop1()
-    pcall(function()                     
+    local function loop1()
+        pcall(function()                     
         local player = game.Players.LocalPlayer
-        local data = game.ReplicatedStorage.Datas[player.UserId]
-        local events = game:GetService("ReplicatedStorage").Package.Events
+local data = game.ReplicatedStorage.Datas[player.UserId]
+local events = game:GetService("ReplicatedStorage").Package.Events
 
-        -- Liste de missions pour le jeu avec l'ID 3311165597
-        local missions_Planet = {
-            { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
-            { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
-            { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 3500000 },
-            { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500001, endRange = 10000000 },
-            { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
-            { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
-            { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge }
-        }
+-- Liste de missions pour le jeu avec l'ID 3311165597
+local missions_Planet = {
+    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
+    { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
+    { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 3500000 },
+    { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500001, endRange = 10000000 },
+    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
+    { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
+    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge }
+}
 
-        -- Liste de missions pour le jeu avec l'ID 5151400895
-        local missions_VillsPlanet = {
-            { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 350000001, endRange = 700000000 },
-            { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 700000001, endRange = 1000000000 },
-            { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 1000000001, endRange = 2000000000 },
-            { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2000000001, endRange = 4200000000 },
-            { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
-            { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
-            { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
-        }
+-- Liste de missions pour le jeu avec l'ID 5151400895
+local missions_VillsPlanet = {
+    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 350000001, endRange = 700000000 },
+    { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 700000001, endRange = 1000000000 },
+    { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 1000000001, endRange = 2000000000 },
+    { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2000000001, endRange = 4200000000 },
+    { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
+    { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
+    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
+}
 
-        -- Fonction pour obtenir la bonne liste de missions en fonction du monde
-        local function getMissions()
-            if isLoop1Active then
-                if game.PlaceId == 3311165597 then
-                    return missions_Planet
-                elseif game.PlaceId == 5151400895 then
-                    return missions_VillsPlanet
-                else
-                    return {} -- Si le jeu n'est pas reconnu
-                end
-            else
-                return {} -- Si la boucle n'est pas active, retourne une liste vide
-            end
+-- Variable pour stocker la liste des missions active
+local function getMissions()
+    if isLoop1Active then
+        if game.PlaceId == 3311165597 then
+            return missions_Planet
+        elseif game.PlaceId == 5151400895 then
+            return missions_VillsPlanet
+        else
+            return {} -- Si le jeu n'est pas reconnu
         end
-
-        -- Le reste du code où tu utilises les missions
-        local missions = getMissions()  -- Appeler la fonction pour mettre à jour la liste des missions
-
-        local SelectedQuest
-        local SelectedMob
-        local isDoingAlternateQuest = false
-
-        local function BossIsAlive(mobName)
-            local boss = game.Workspace.Living:FindFirstChild(mobName)
-            return boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0
-        end
-
-        local function getQuestByStat(stat)
-            for i, mission in ipairs(missions) do
-                if stat >= mission.requiredValue and stat <= mission.endRange then
-                    return mission.name, mission.bossName, i
-                end
-            end
-            return nil, nil, nil
-        end
-
-        local function assignQuest()
-            local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
-
-            local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
-            local previousQuest, previousMob = nil, nil
-
-            if questIndex and questIndex > 1 then
-                previousQuest = missions[questIndex - 1].name
-                previousMob = missions[questIndex - 1].bossName
-            end
-
-            if not currentQuest then
-                warn("[INFO] Aucune quête disponible pour cette stat.")
-                return
-            end
-
-            if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
-                SelectedQuest = previousQuest
-                SelectedMob = previousMob
-                warn("[INFO] Passage à la quête précédente : " .. previousQuest)
-            else
-                SelectedQuest = currentQuest
-                SelectedMob = currentMob
-                isDoingAlternateQuest = not isDoingAlternateQuest
-                warn("[INFO] Passage à la quête principale : " .. currentQuest)
-            end
-        end
-
-        local isTakingQuest = false
-
-        local function startMission()
-            if isTakingQuest then return end
-            isTakingQuest = true
-
-            pcall(function()
-                local questValue = game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value
-
-                if questValue == SelectedQuest then
-                    isTakingQuest = false
-                    return
-                end
-
-                local npc = game:GetService("Workspace").Others.NPCs:FindFirstChild(SelectedQuest)
-                if npc and npc:FindFirstChild("HumanoidRootPart") then
-                    player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-                    task.wait()
-                    events.Qaction:InvokeServer(npc)
-                    warn("[INFO] Quête acceptée : " .. SelectedQuest)
-                end
-            end)
-
-            task.wait()
-            isTakingQuest = false
-        end
-
-        task.spawn(function()
-            while true do
-                task.wait()
-                pcall(function()
-                    assignQuest()
-                    if game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value == "" then
-                        startMission()
-                    end
-                end)
-            end
-        end)
-    end)
+    else
+        return {} -- Si la boucle n'est pas active, retourne une liste vide
+    end
 end
 
+-- Utilisation :
+local missions
+if isLoop1Active then
+    missions = getMissions()  -- N'assigner les missions que si isLoop1Active est true
+else
+    missions = {}  -- Si isLoop1Active est false, missions est vide
+end
 
+-- Le reste de ton code où tu utilises la liste `missions`
+local SelectedQuest
+local SelectedMob
+local isDoingAlternateQuest = false
+
+local function BossIsAlive(mobName)
+    local boss = game.Workspace.Living:FindFirstChild(mobName)
+    return boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0
+end
+
+local function getQuestByStat(stat)
+    for i, mission in ipairs(missions) do
+        if stat >= mission.requiredValue and stat <= mission.endRange then
+            return mission.name, mission.bossName, i
+        end
+    end
+    return nil, nil, nil
+end
+
+local function assignQuest()
+    local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
+
+    local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
+    local previousQuest, previousMob = nil, nil
+
+    if questIndex and questIndex > 1 then
+        previousQuest = missions[questIndex - 1].name
+        previousMob = missions[questIndex - 1].bossName
+    end
+
+    if not currentQuest then
+        warn("[INFO] Aucune quête disponible pour cette stat.")
+        return
+    end
+
+    if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
+        SelectedQuest = previousQuest
+        SelectedMob = previousMob
+        warn("[INFO] Passage à la quête précédente : " .. previousQuest)
+    else
+        SelectedQuest = currentQuest
+        SelectedMob = currentMob
+        isDoingAlternateQuest = not isDoingAlternateQuest
+        warn("[INFO] Passage à la quête principale : " .. currentQuest)
+    end
+end
+
+local isTakingQuest = false
+
+local function startMission()
+    if isTakingQuest then return end
+    isTakingQuest = true
+
+    pcall(function()
+        local questValue = game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value
+
+        if questValue == SelectedQuest then
+            isTakingQuest = false
+            return
+        end
+
+        local npc = game:GetService("Workspace").Others.NPCs:FindFirstChild(SelectedQuest)
+        if npc and npc:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+            task.wait()
+            events.Qaction:InvokeServer(npc)
+            warn("[INFO] Quête acceptée : " .. SelectedQuest)
+        end
+    end)
+
+    task.wait()
+    isTakingQuest = false
+end
+
+task.spawn(function()
+    while true do
+        task.wait()
+        pcall(function()
+            assignQuest()
+            if game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value == "" then
+                startMission()
+            end
+        end)
+    end
+end)
 
  
 
@@ -1295,64 +1297,50 @@ end)
 end
 
 
--- Vérifie si l'état des boucles est activé avant d'exécuter les coroutines
-switchButton1.MouseButton1Click:Connect(function()
+    switchButton1.MouseButton1Click:Connect(function()
+        pcall(function()
+            isLoop1Active = not isLoop1Active
+            toggleSwitch(isLoop1Active, switchBall1)
+            SaveSwitchState(isLoop1Active, "Switch1")
+        end)
+    end)
+
+
+    switchButton3.MouseButton1Click:Connect(function()
     pcall(function()
-        isLoop1Active = not isLoop1Active
-        toggleSwitch(isLoop1Active, switchBall1)
-        SaveSwitchState(isLoop1Active, "Switch1")
-        
-        -- Lancer la boucle 1 seulement si isLoop1Active est activé
-        if isLoop1Active then
-            coroutine.wrap(loop1)()  -- Lance la boucle
-        end
+    isLoop3Active = not isLoop3Active
+    toggleSwitch(isLoop3Active, switchBall3)
+    SaveSwitchState(isLoop3Active, "Switch3")
     end)
 end)
 
-switchButton3.MouseButton1Click:Connect(function()
-    pcall(function()
-        isLoop3Active = not isLoop3Active
-        toggleSwitch(isLoop3Active, switchBall3)
-        SaveSwitchState(isLoop3Active, "Switch3")
-        
-        -- Lancer la boucle 3 seulement si isLoop3Active est activé
-        if isLoop3Active then
-            coroutine.wrap(loop3)()  -- Lance la boucle
-        end
+    switchButton5.MouseButton1Click:Connect(function()
+        pcall(function()
+            isLoop5Active = not isLoop5Active
+            toggleSwitch(isLoop5Active, switchBall5)
+            SaveSwitchState(isLoop5Active, "Switch5")
+        end)
     end)
-end)
 
-switchButton5.MouseButton1Click:Connect(function()
-    pcall(function()
-        isLoop5Active = not isLoop5Active
-        toggleSwitch(isLoop5Active, switchBall5)
-        SaveSwitchState(isLoop5Active, "Switch5")
-        
-        -- Lancer la boucle 5 seulement si isLoop5Active est activé
-        if isLoop5Active then
-            coroutine.wrap(loop5)()  -- Lance la boucle
-        end
+
+    switchButton7.MouseButton1Click:Connect(function()
+        pcall(function()
+            isLoop7Active = not isLoop7Active
+            toggleSwitch(isLoop7Active, switchBall7)
+            SaveSwitchState(isLoop7Active, "Switch7")
+        end)
     end)
-end)
 
-switchButton7.MouseButton1Click:Connect(function()
-    pcall(function()
-        isLoop7Active = not isLoop7Active
-        toggleSwitch(isLoop7Active, switchBall7)
-        SaveSwitchState(isLoop7Active, "Switch7")
-        
-        -- Lancer la boucle 7 seulement si isLoop7Active est activé
-        if isLoop7Active then
-            coroutine.wrap(loop7)()  -- Lance la boucle
-        end
-    end)
-end)
+    toggleSwitch(isLoop1Active, switchBall1)
+    toggleSwitch(isLoop3Active, switchBall3)
+    toggleSwitch(isLoop5Active, switchBall5)
+    toggleSwitch(isLoop7Active, switchBall7)
 
--- Assure-toi que la GUI est initialisée avec les bons états au départ
-toggleSwitch(isLoop1Active, switchBall1)
-toggleSwitch(isLoop3Active, switchBall3)
-toggleSwitch(isLoop5Active, switchBall5)
-toggleSwitch(isLoop7Active, switchBall7)
+    coroutine.wrap(loop1)()
+    coroutine.wrap(loop3)()
+    coroutine.wrap(loop5)()
+    coroutine.wrap(loop7)()
+end
 
 initSwitches(MenuPanel)
 
