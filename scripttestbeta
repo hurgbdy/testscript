@@ -476,16 +476,20 @@ local missions_VillsPlanet = {
 }
 
 -- Variable pour stocker la liste des missions active
-local missions = {}
-
--- Vérifie l'ID du jeu et charge la bonne liste de missions
-if game.PlaceId == 3311165597 then
-    missions = missions_Planet
-elseif game.PlaceId == 5151400895 then
-    missions = missions_VillsPlanet
-else
-    missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
+local function getMissions()
+    and isLoop1Active then
+    if game.PlaceId == 3311165597 then
+        return missions_Planet
+    elseif game.PlaceId == 5151400895 then
+        return missions_VillsPlanet
+    else
+        return {} -- Si le jeu n'est pas reconnu
+    end
 end
+
+-- Utilisation :
+local missions = getMissions()
+
 
 -- Le reste de ton code où tu utilises la liste `missions`
 local SelectedQuest
