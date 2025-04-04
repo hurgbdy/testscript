@@ -475,22 +475,24 @@ local missions_VillsPlanet = {
     { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
 }
 
-local missions = {}
-
-local function selectionSelectMission()
-    if not isLoop1Active then return end
-
+local function getMissions()
     if game.PlaceId == 3311165597 then
-        missions = missions_Planet
+        return missions_Planet
     elseif game.PlaceId == 5151400895 then
-        missions = missions_VillsPlanet
+        return missions_VillsPlanet
     else
-        missions = {}
+        return {}
     end
 end
 
--- Appel initial
-selectionSelectMission()
+-- Lancement d'une boucle si isLoop1Active est true
+task.spawn(function()
+    while isLoop1Active do
+        missions = getMissions()
+        task.wait(1) -- Attendre 1 seconde avant de re-check (à adapter selon ton besoin)
+    end
+end)
+
 
 
 -- Le reste de ton code où tu utilises la liste `missions`
@@ -647,55 +649,57 @@ end)
 task.spawn(function()
     while true do
         task.wait()
+        task.spawn(function()
+            local player = game.Players.LocalPlayer
+            local data = game.ReplicatedStorage.Datas[player.UserId]
+            local mission = data.Quest.Value
 
-        -- On vérifie que loop1 est actif et que missions est bien rempli
-        if isLoop1Active and #missions > 0 then
-            task.spawn(function()
-                local player = game.Players.LocalPlayer
-                local data = game.ReplicatedStorage.Datas[player.UserId]
-                local mission = data.Quest.Value
+            -- Vérifier que le joueur existe bien
+            if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
+                warn("⚠️ ERREUR: Le joueur ou son HumanoidRootPart est introuvable !")
+                return
+            end
 
-                if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-                    warn("⚠️ ERREUR: Le joueur ou son HumanoidRootPart est introuvable !")
-                    return
+            -- Trouver le bon nom du boss à partir de la mission
+            local bossName
+            for _, quest in ipairs(missions) do
+                if quest.name == mission then
+                    bossName = quest.bossName
+                    break
                 end
+            end
 
-                local bossName
-                for _, quest in ipairs(missions) do
-                    if quest.name == mission then
-                        bossName = quest.bossName
-                        break
-                    end
+            if not bossName then
+                warn("⚠️ Aucun boss correspondant trouvé pour la mission:", mission)
+                return
+            end
+
+            -- Trouver tous les boss avec le bon nom
+            local bossCount = 0
+            for _, boss in ipairs(game.Workspace.Living:GetChildren()) do
+                if boss.Name == bossName and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
+                    bossCount = bossCount + 1
+                    player.Status.Blocking.Value = false  
+
+                    -- Position fixe derrière le boss (0, 0, 4)
+                    local enemyHRP = boss.HumanoidRootPart
+                    local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
+
+                    -- Téléporter le joueur et afficher les informations
+                    player.Character.HumanoidRootPart.CFrame = behindPosition
+                    warn("✅ Joueur téléporté derrière le boss:", boss.Name, " | Position:", behindPosition.Position)
+
+                    task.wait() -- Attendre un peu avant de passer au suivant
                 end
+            end
 
-                if not bossName then
-                    warn("⚠️ Aucun boss correspondant trouvé pour la mission:", mission)
-                    return
-                end
-
-                local bossCount = 0
-                for _, boss in ipairs(game.Workspace.Living:GetChildren()) do
-                    if boss.Name == bossName and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
-                        bossCount += 1
-                        player.Status.Blocking.Value = false  
-
-                        local enemyHRP = boss.HumanoidRootPart
-                        local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
-
-                        player.Character.HumanoidRootPart.CFrame = behindPosition
-                        warn("✅ Joueur téléporté derrière le boss:", boss.Name, " | Position:", behindPosition.Position)
-
-                        task.wait()
-                    end
-                end
-
-                if bossCount == 0 then
-                    warn("⚠️ Aucun boss trouvé avec le nom:", bossName)
-                else
-                    warn("✅ Nombre total de boss traités:", bossCount)
-                end
-            end)
-        end
+            -- Vérifier si des boss ont été trouvés
+            if bossCount == 0 then
+                warn("⚠️ Aucun boss trouvé avec le nom:", bossName)
+            else
+                warn("✅ Nombre total de boss traités:", bossCount)
+            end
+        end)
     end
 end)
 
