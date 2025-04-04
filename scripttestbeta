@@ -477,12 +477,16 @@ local missions_VillsPlanet = {
 
 -- Variable pour stocker la liste des missions active
 local function getMissions()
-    if game.PlaceId == 3311165597 then
-        return missions_Planet
-    elseif game.PlaceId == 5151400895 then
-        return missions_VillsPlanet
+    if isLoop1Active then
+        if game.PlaceId == 3311165597 then
+            return missions_Planet
+        elseif game.PlaceId == 5151400895 then
+            return missions_VillsPlanet
+        else
+            return {} -- Si le jeu n'est pas reconnu
+        end
     else
-        return {} -- Si le jeu n'est pas reconnu
+        return {} -- Si la boucle n'est pas active, retourne une liste vide
     end
 end
 
