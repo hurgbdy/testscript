@@ -491,7 +491,12 @@ local function getMissions()
 end
 
 -- Utilisation :
-local missions = getMissions()
+local missions
+if isLoop1Active then
+    missions = getMissions()  -- N'assigner les missions que si isLoop1Active est true
+else
+    missions = {}  -- Si isLoop1Active est false, missions est vide
+end
 
 -- Le reste de ton code où tu utilises la liste `missions`
 local SelectedQuest
