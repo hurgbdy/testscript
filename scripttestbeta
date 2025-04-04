@@ -475,25 +475,19 @@ local missions_VillsPlanet = {
     { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
 }
 
+-- Variable pour stocker la liste des missions active
 local function getMissions()
     if game.PlaceId == 3311165597 then
         return missions_Planet
     elseif game.PlaceId == 5151400895 then
         return missions_VillsPlanet
     else
-        return {}
+        return {} -- Si le jeu n'est pas reconnu
     end
 end
 
--- Lancement d'une boucle si isLoop1Active est true
-task.spawn(function()
-    while isLoop1Active do
-        missions = getMissions()
-        task.wait(1) -- Attendre 1 seconde avant de re-check (à adapter selon ton besoin)
-    end
-end)
-
-
+-- Utilisation :
+local missions = getMissions()
 
 -- Le reste de ton code où tu utilises la liste `missions`
 local SelectedQuest
