@@ -40,6 +40,37 @@ Menu.BorderColor3 = Color3.fromRGB(0, 0, 0)
 Menu.BorderSizePixel = 0
 Menu.Position = UDim2.new(0.286666662, 0, 0.0792951509, 0)
 Menu.Size = UDim2.new(0, 350, 0, 341)
+local dragging = false
+local dragInput, mousePos, framePos
+
+Menu.Active = true
+
+Menu.InputBegan:Connect(function(input, gameProcessed)
+	if gameProcessed then return end
+
+	-- Détecter si la souris clique sur le menu
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragInput = input
+		mousePos = input.Position
+		framePos = Menu.Position
+	end
+end)
+
+Menu.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - mousePos
+		Menu.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+	end
+end)
+
+Menu.InputEnded:Connect(function(input)
+	if input == dragInput then
+		dragging = false
+	end
+end)
+
+
 
 UICorner.CornerRadius = UDim.new(0, 9)
 UICorner.Parent = Menu
