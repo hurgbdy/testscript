@@ -588,7 +588,7 @@ task.spawn(function()
                     print("Teleporting to Earth")
                     task.wait(8)  -- Attendre 8 secondes après la TP pour éviter le spam
                 end
-            elseif data.Strength.Value >= 350000000 and game.PlaceId ~= 5151400895 and isLoop3Active then
+            elseif data.Strength.Value >= 350000001 and game.PlaceId ~= 5151400895 and isLoop3Active then
                 local A_1 = "Vills Planet"
                 local Event = events.TP
                 if game.PlaceId ~= 5151400895 then
