@@ -449,10 +449,16 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
 
     local function loop1()
         pcall(function()                     
-        local player = game.Players.LocalPlayer
-local data = game.ReplicatedStorage.Datas[player.UserId]
-local events = game:GetService("ReplicatedStorage").Package.Events
+            local player = game.Players.LocalPlayer
 
+            -- Attendre que tout soit prêt avant d'exécuter la suite
+            repeat task.wait() until player and player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            repeat task.wait() until game.ReplicatedStorage:FindFirstChild("Datas") and game.ReplicatedStorage.Datas:FindFirstChild(player.UserId)
+            repeat task.wait() until game.ReplicatedStorage:FindFirstChild("Package") and game.ReplicatedStorage.Package:FindFirstChild("Events")
+            
+            local data = game.ReplicatedStorage.Datas[player.UserId]
+            local events = game:GetService("ReplicatedStorage").Package.Events
+            
 -- Liste de missions pour le jeu avec l'ID 3311165597
 local missions_Planet = {
     { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
