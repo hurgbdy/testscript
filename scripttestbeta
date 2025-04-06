@@ -283,3 +283,43 @@ TRANSFORM.TextSize = 14.000
 
 UICorner_7.CornerRadius = UDim.new(1, 0)
 UICorner_7.Parent = TRANSFORM
+
+
+
+
+
+
+local options = {
+	["AUTOFARM"] = false,
+	["TP PLANET"] = false,
+	["REBIRTH"] = false,
+	["SKILLS"] = false,
+	["HOP SERVER"] = false,
+	["TRANSFORM"] = false,
+}
+
+local buttons = {
+	Menu:FindFirstChild("AUTOFARM"),
+	Menu:FindFirstChild("TP PLANET"),
+	Menu:FindFirstChild("REBIRTH"),
+	Menu:FindFirstChild("SKILLS"),
+	Menu:FindFirstChild("HOP SERVER"),
+	Menu:FindFirstChild("TRANSFORM"),
+}
+
+for _, button in ipairs(buttons) do
+	if button and button:IsA("TextButton") then
+		button.MouseButton1Click:Connect(function()
+			local name = button.Name
+			options[name] = not options[name]
+
+			if options[name] then
+				button.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- vert = activé
+			else
+				button.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- rouge = désactivé
+			end
+
+			print(name .. " -> " .. (options[name] and "ON" or "OFF"))
+		end)
+	end
+end
