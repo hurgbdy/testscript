@@ -520,13 +520,24 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
+    local bestIndex = nil
+    local closestRequiredValue = -math.huge
+
     for i, mission in ipairs(missions) do
-        if stat >= mission.requiredValue and stat <= mission.endRange then
-            return mission.name, mission.bossName, i
+        if mission.requiredValue <= stat and mission.requiredValue > closestRequiredValue then
+            bestIndex = i
+            closestRequiredValue = mission.requiredValue
         end
     end
+
+    if bestIndex then
+        local mission = missions[bestIndex]
+        return mission.name, mission.bossName, bestIndex
+    end
+
     return nil, nil, nil
 end
+
 
 local function assignQuest()
     
@@ -840,66 +851,56 @@ end)
         end
     end
 
-    local function loop3()
-        pcall(function()
-            task.spawn(function()
-                while true do
-                    task.wait()
-    
-                    local success, fallo = pcall(function()
-                        local Forms = {'Ego Instinct','Divine Blue','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
-                                       'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
-                                       'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
-                                       'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
-                                       'SSJ Rage','SSJG','SSJ4','Mystic','LSSJ','SSJ3','Spirit SSJ','SSJ2 Majin','SSJ2','SSJ Kaioken','SSJ','FSSJ','Kaioken'}
-    
-                        local equipRemote = game:GetService("ReplicatedStorage").Package.Events.equipskill
-                        local taRemote = game:GetService("ReplicatedStorage").Package.Events.ta
-                        local player = game:GetService("Players").LocalPlayer
-                        local stats = player.Character:WaitForChild("Stats")
-    
-                        -- Vérification des stats pour autoriser la transformation
-                        if stats.Strength.Value > 5000 and stats.Defense.Value > 5000 and stats.Energy.Value > 5000 and stats.Speed.Value > 5000 then
-                            local currentTransfo = player.Status.Transformation.Value
-                            local bestTransfo = nil
-    
-                            -- Trouver la meilleure transformation disponible selon les stats
-                            for _, v in ipairs(Forms) do
-                                if equipRemote:InvokeServer(v) then
-                                    bestTransfo = v
-                                    break
-                                end
-                            end
-    
-                            -- Vérifier si une meilleure transformation est disponible
-                            if bestTransfo and bestTransfo ~= currentTransfo then
-                                -- Vérifie si le joueur est déjà transformé avant de se détransformer
-                                if currentTransfo ~= "" then
-                                    taRemote:InvokeServer() -- Se détransformer
-                                    task.wait()
-                                end
-    
-                                -- Équiper la nouvelle transformation
-                                equipRemote:InvokeServer(bestTransfo)
-                                task.wait()
-    
-                                -- Vérifier si l'équipement a fonctionné avant de tenter de se transformer
-                                if player.Status.Transformation.Value == bestTransfo then
-                                    taRemote:InvokeServer() -- Se transformer avec la nouvelle transformation
-                                else
-                                    warn("Échec de l'équipement de la transformation : " .. tostring(bestTransfo))
-                                end
-                            end
+ 
+        
+    task.spawn(function()
+        while task.wait()  do
+        pcall(function()                   
+           local success, fallo = pcall(function()
+                local Forms = {'Ego Instinct','Divine Blue','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
+                               'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
+                               'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
+                               'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
+                               'SSJ Rage','SSJG','SSJ4','Mystic','LSSJ','SSJ3','Spirit SSJ','SSJ2 Majin','SSJ2','SSJ Kaioken','SSJ','FSSJ','Kaioken'}
+
+                local equipRemote = game:GetService("ReplicatedStorage").Package.Events.equipskill
+                local taRemote = game:GetService("ReplicatedStorage").Package.Events.ta
+                local player = game:GetService("Players").LocalPlayer
+                local stats = player.Character:WaitForChild("Stats")
+
+                if stats.Strength.Value > 5000 and stats.Defense.Value > 5000 and stats.Energy.Value > 5000 and stats.Speed.Value > 5000 then
+                    local currentTransfo = player.Status.Transformation.Value
+                    local bestTransfo = nil
+
+                    for _, v in ipairs(Forms) do
+                        if equipRemote:InvokeServer(v) then
+                            bestTransfo = v
+                            break
                         end
-                    end)
-    
-                    if not success then
-                        warn(fallo)
+                    end
+
+                    if bestTransfo and bestTransfo ~= currentTransfo then
+                        if currentTransfo ~= "" then
+                            taRemote:InvokeServer() 
+                            task.wait()
+                        end
+
+                        equipRemote:InvokeServer(bestTransfo)
+                        task.wait()    
+                        if player.Status.Transformation.Value == bestTransfo then
+                            taRemote:InvokeServer() -- Se transformer avec la nouvelle transformation
+                        else
+                            warn("Échec de l'équipement de la transformation : " .. tostring(bestTransfo))
+                        end
                     end
                 end
-            end)
+            end)    
+            if not success then
+                warn(fallo)
+            end
         end)
-    end
+end
+end)
     
     
     
