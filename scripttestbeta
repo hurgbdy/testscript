@@ -487,6 +487,24 @@ local missions_VillsPlanet = {
 }
 
 
+print("Valeur actuelle de isLoop1Active:", isLoop1Active)
+if isLoop1Active then
+    print("isLoop1Active est vrai")
+    if game.PlaceId == 3311165597 then
+        print("PlaceId est 3311165597, missions = missions_Planet")
+        missions = missions_Planet
+    elseif game.PlaceId == 5151400895 then
+        print("PlaceId est 5151400895, missions = missions_VillsPlanet")
+        missions = missions_VillsPlanet
+    else
+        print("PlaceId inconnu, missions = {}")
+        missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
+    end
+else
+    warn("isLoop1Active est faux, le bloc ne sera pas exécuté")
+end
+
+
 
 
 
@@ -502,58 +520,39 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
-    for i, mission in ipairs(missions) do
-        if stat >= mission.requiredValue and stat <= mission.endRange then
-            return mission.name, mission.bossName, i
-        end
-    end
-    return nil, nil, nil
-end
-
-local function assignQuest()
-    print("Valeur actuelle de isLoop1Active:", isLoop1Active)
-    if isLoop1Active then
-        print("isLoop1Active est vrai")
-        if game.PlaceId == 3311165597 then
-            print("PlaceId est 3311165597, missions = missions_Planet")
-            missions = missions_Planet
-        elseif game.PlaceId == 5151400895 then
-            print("PlaceId est 5151400895, missions = missions_VillsPlanet")
-            missions = missions_VillsPlanet
-        else
-            print("PlaceId inconnu, missions = {}")
-            missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
-        end
-    else
-        warn("isLoop1Active est faux, le bloc ne sera pas exécuté")
-        return
-    end
-
-    local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
-
-    -- Trouver la quête la plus proche sans dépasser
     local selectedIndex = nil
-    local closestStat = -math.huge
+    local closestRequiredValue = -math.huge
 
-    for i, quest in ipairs(missions) do
-        if quest.requiredStat <= lowestStat and quest.requiredStat > closestStat then
-            closestStat = quest.requiredStat
+    for i, mission in ipairs(missions) do
+        if mission.requiredValue <= stat and mission.requiredValue > closestRequiredValue then
+            closestRequiredValue = mission.requiredValue
             selectedIndex = i
         end
     end
 
-    if not selectedIndex then
-        warn("[INFO] Aucune quête disponible pour cette stat.")
-        return
+    if selectedIndex then
+        local mission = missions[selectedIndex]
+        return mission.name, mission.bossName, selectedIndex
     end
 
-    local currentQuest = missions[selectedIndex].name
-    local currentMob = missions[selectedIndex].bossName
+    return nil, nil, nil
+end
 
+local function assignQuest()
+    
+    local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
+
+    local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
     local previousQuest, previousMob = nil, nil
-    if selectedIndex > 1 then
-        previousQuest = missions[selectedIndex - 1].name
-        previousMob = missions[selectedIndex - 1].bossName
+
+    if questIndex and questIndex > 1 then
+        previousQuest = missions[questIndex - 1].name
+        previousMob = missions[questIndex - 1].bossName
+    end
+
+    if not currentQuest then
+        warn("[INFO] Aucune quête disponible pour cette stat.")
+        return
     end
 
     if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
@@ -567,7 +566,6 @@ local function assignQuest()
         warn("[INFO] Passage à la quête principale : " .. currentQuest)
     end
 end
-
 
 local isTakingQuest = false
 
