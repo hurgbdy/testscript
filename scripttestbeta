@@ -520,21 +520,11 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
-    local selectedIndex = nil
-    local closestRequiredValue = -math.huge
-
     for i, mission in ipairs(missions) do
-        if mission.requiredValue <= stat and mission.requiredValue > closestRequiredValue then
-            closestRequiredValue = mission.requiredValue
-            selectedIndex = i
+        if stat >= mission.requiredValue and stat <= mission.endRange then
+            return mission.name, mission.bossName, i
         end
     end
-
-    if selectedIndex then
-        local mission = missions[selectedIndex]
-        return mission.name, mission.bossName, selectedIndex
-    end
-
     return nil, nil, nil
 end
 
