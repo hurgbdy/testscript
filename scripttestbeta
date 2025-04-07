@@ -487,24 +487,6 @@ local missions_VillsPlanet = {
 }
 
 
-print("Valeur actuelle de isLoop1Active:", isLoop1Active)
-if isLoop1Active then
-    print("isLoop1Active est vrai")
-    if game.PlaceId == 3311165597 then
-        print("PlaceId est 3311165597, missions = missions_Planet")
-        missions = missions_Planet
-    elseif game.PlaceId == 5151400895 then
-        print("PlaceId est 5151400895, missions = missions_VillsPlanet")
-        missions = missions_VillsPlanet
-    else
-        print("PlaceId inconnu, missions = {}")
-        missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
-    end
-else
-    warn("isLoop1Active est faux, le bloc ne sera pas exécuté")
-end
-
-
 
 
 
@@ -530,44 +512,50 @@ end
 
 local function assignQuest()
     print("Valeur actuelle de isLoop1Active:", isLoop1Active)
-
-    -- On fusionne les missions de toutes les planètes
-    local allMissions = {}
-    for _, m in ipairs(missions_Planet) do table.insert(allMissions, m) end
-    for _, m in ipairs(missions_VillsPlanet) do table.insert(allMissions, m) end
-
-    -- Si loop1 est inactif, on n'exécute rien
-    if not isLoop1Active then
+    if isLoop1Active then
+        print("isLoop1Active est vrai")
+        if game.PlaceId == 3311165597 then
+            print("PlaceId est 3311165597, missions = missions_Planet")
+            missions = missions_Planet
+        elseif game.PlaceId == 5151400895 then
+            print("PlaceId est 5151400895, missions = missions_VillsPlanet")
+            missions = missions_VillsPlanet
+        else
+            print("PlaceId inconnu, missions = {}")
+            missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
+        end
+    else
         warn("isLoop1Active est faux, le bloc ne sera pas exécuté")
         return
     end
 
-    -- Trouver la meilleure mission correspondant aux stats actuelles
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
-    local bestMatchIndex = nil
 
-    for i = #allMissions, 1, -1 do
-        if lowestStat >= allMissions[i].requiredStat then
-            bestMatchIndex = i
-            break
+    -- Trouver la quête la plus proche sans dépasser
+    local selectedIndex = nil
+    local closestStat = -math.huge
+
+    for i, quest in ipairs(missions) do
+        if quest.requiredStat <= lowestStat and quest.requiredStat > closestStat then
+            closestStat = quest.requiredStat
+            selectedIndex = i
         end
     end
 
-    if not bestMatchIndex then
-        warn("[INFO] Aucune mission trouvée avec les stats actuelles.")
+    if not selectedIndex then
+        warn("[INFO] Aucune quête disponible pour cette stat.")
         return
     end
 
-    local currentQuest = allMissions[bestMatchIndex].name
-    local currentMob = allMissions[bestMatchIndex].bossName
+    local currentQuest = missions[selectedIndex].name
+    local currentMob = missions[selectedIndex].bossName
 
     local previousQuest, previousMob = nil, nil
-    if bestMatchIndex > 1 then
-        previousQuest = allMissions[bestMatchIndex - 1].name
-        previousMob = allMissions[bestMatchIndex - 1].bossName
+    if selectedIndex > 1 then
+        previousQuest = missions[selectedIndex - 1].name
+        previousMob = missions[selectedIndex - 1].bossName
     end
 
-    -- Logique d'alternance
     if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
         SelectedQuest = previousQuest
         SelectedMob = previousMob
