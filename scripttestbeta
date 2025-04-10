@@ -282,7 +282,7 @@ local function SaveMenuState(isExpanded)
     end)
 
     if not success then
-        warn("Error al guardar el estado del menú: " .. tostring(err))
+        
     end
 end
 
@@ -296,7 +296,7 @@ local function SaveMenuState(isExpanded)
     end)
 
     if not success then
-        warn("Error al guardar el estado del menú: " .. tostring(err))
+        
     end
 end
 
@@ -313,7 +313,7 @@ local function LoadMenuState()
     end)
 
     if not success then
-        warn("Error al cargar el estado del menú: " .. tostring(result))
+        
         return false
     end
 
@@ -352,7 +352,7 @@ MinimizeButton.MouseButton1Click:Connect(function()
     end)
 
     if not success then
-        warn("Error al minimizar/expandir el menú: " .. tostring(err))
+        
     end
 end)
 
@@ -492,16 +492,16 @@ local missions_VillsPlanet = {
 if isLoop1Active then
     if game.PlaceId == 3311165597 then
         missions = missions_Planet
-        warn("[INIT] missions_Planet sélectionné")
+        
     elseif game.PlaceId == 5151400895 then
         missions = missions_VillsPlanet
-        warn("[INIT] missions_VillsPlanet sélectionné")
+        
     else
         missions = {}
-        warn("[INIT] game.PlaceId inconnu, missions = {}")
+       
     end
 else
-    warn("[INIT] Switch1 désactivé → pas de missions sélectionnées")
+    
 end
 
 
@@ -551,19 +551,19 @@ local function assignQuest()
     end
 
     if not currentQuest then
-        warn("[INFO] Aucune quête disponible pour cette stat.")
+        
         return
     end
 
     if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
         SelectedQuest = previousQuest
         SelectedMob = previousMob
-        warn("[INFO] Passage à la quête précédente : " .. previousQuest)
+       
     else
         SelectedQuest = currentQuest
         SelectedMob = currentMob
         isDoingAlternateQuest = not isDoingAlternateQuest
-        warn("[INFO] Passage à la quête principale : " .. currentQuest)
+        
     end
 end
 
@@ -586,7 +586,7 @@ local function startMission()
             player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
             task.wait()
             events.Qaction:InvokeServer(npc)
-            warn("[INFO] Quête acceptée : " .. SelectedQuest)
+           
         end
     end)
 
@@ -635,7 +635,7 @@ task.spawn(function()
         end)
 
         if not success then
-            warn("Error executing teleportation: " .. fallo)
+            
         end
     end
 end)
@@ -651,7 +651,7 @@ task.spawn(function()
             end)
 
             if not success then
-                warn("Error al invocar el evento rebirth: " .. fallo)
+                
             end
         end
     end
@@ -683,7 +683,7 @@ task.spawn(function()
                 local mission = data.Quest.Value
 
                 if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-                    warn("⚠️ ERREUR: Le joueur ou son HumanoidRootPart est introuvable !")
+                    
                     return
                 end
 
@@ -696,7 +696,7 @@ task.spawn(function()
                 end
 
                 if not bossName then
-                    warn("⚠️ Aucun boss correspondant trouvé pour la mission:", mission)
+                    
                     return
                 end
 
@@ -710,16 +710,16 @@ task.spawn(function()
                         local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
 
                         player.Character.HumanoidRootPart.CFrame = behindPosition
-                        warn("✅ Joueur téléporté derrière le boss:", boss.Name, " | Position:", behindPosition.Position)
+                       
 
                         task.wait()
                     end
                 end
 
                 if bossCount == 0 then
-                    warn("⚠️ Aucun boss trouvé avec le nom:", bossName)
+                    
                 else
-                    warn("✅ Nombre total de boss traités:", bossCount)
+                    
                 end
             end)
         end
@@ -777,478 +777,7 @@ end)
         end)
     end
 
-   local function loop2()
-        while true do
-            if isLoop2Active then
-    local lplr = game.Players.LocalPlayer
-    local ldata = game.ReplicatedStorage:WaitForChild("Datas"):WaitForChild(lplr.UserId)
 
-    local function format_number(number)
-        local suffixes = {"", "K", "M", "B", "T", "QD"}
-        local suffix_index = 1
-
-        while math.abs(number) >= 1000 and suffix_index < #suffixes do
-            number = number / 1000.0
-            suffix_index = suffix_index + 1
-        end
-
-        return suffix_index > 1 and string.format("%.1f%s", number, suffixes[suffix_index]) or tostring(number)
-    end
-
-local function updateStatsGui()
-    local success, err = pcall(function()
-        local MainFrame = lplr.PlayerGui:WaitForChild("Main"):WaitForChild("MainFrame")
-        local StatsFrame = MainFrame:WaitForChild("Frames"):WaitForChild("Stats")
-        local ZeniLabel = MainFrame.Indicator:FindFirstChild("Zeni")
-        local Bars = MainFrame:WaitForChild("Bars")
-        local HPText = Bars.Health:FindFirstChild("TextLabel")
-        local EnergyText = Bars.Energy:FindFirstChild("TextLabel")
-
-        local health = lplr.Character and lplr.Character:FindFirstChild("Humanoid") and lplr.Character.Humanoid.Health or 0
-        local maxHealth = lplr.Character and lplr.Character:FindFirstChild("Humanoid") and lplr.Character.Humanoid.MaxHealth or 0
-        local ki = lplr.Character and lplr.Character:FindFirstChild("Stats") and lplr.Character.Stats.Ki.Value or 0
-        local maxKi = lplr.Character and lplr.Character:FindFirstChild("Stats") and lplr.Character.Stats.Ki.MaxValue or 0
-
-        pcall(function()
-            HPText.Text = "HEALTH " .. format_number(health) .. " / " .. format_number(maxHealth)
-        end)
-        pcall(function()
-            EnergyText.Text = "ENERGY: " .. format_number(ki) .. " / " .. format_number(maxKi)
-        end)
-        pcall(function()
-            ZeniLabel.Text = format_number(ldata.Zeni.Value) .. " Zeni"
-        end)
-
-        for _, stat in pairs({"Strength", "Speed", "Defense", "Energy"}) do
-            local statLabel = StatsFrame:FindFirstChild(stat)
-            if statLabel then
-                pcall(function()
-                    statLabel.Text = stat .. ": " .. format_number(ldata[stat].Value)
-                end)
-            end
-        end
-    end)
-
-    if not success then
-        warn("Error al actualizar GUI de estadísticas:", err)
-    end
-end
-
-pcall(function()
-    updateStatsGui()
-end)
-
-game:GetService("RunService").Heartbeat:Connect(function()
-    if lplr.Character and lplr.Character:FindFirstChild("Humanoid") and isLoop2Active then
-        pcall(function()
-            updateStatsGui()
-        end)
-    end
-end)
-            end
-            task.wait(.5)
-        end
-    end
-
- 
-        
-    local function loop3()
-        pcall(function()
-            task.spawn(function()
-                local lastTransformation = nil  -- Variable pour suivre la dernière transformation effectuée
-                
-                while true do
-                    task.wait()
-    
-                    local success, fallo = pcall(function()
-                        local Forms = {
-                            'Ego Instinct','Divine Blue','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
-                            'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
-                            'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
-                            'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
-                            'SSJ Rage','SSJG','SSJ4','Mystic','LSSJ','SSJ3','Spirit SSJ','SSJ2 Majin','SSJ2','SSJ Kaioken','SSJ','FSSJ','Kaioken'
-                        }
-    
-                        local equipRemote = game:GetService("ReplicatedStorage").Package.Events.equipskill
-                        local taRemote = game:GetService("ReplicatedStorage").Package.Events.ta
-                        local player = game:GetService("Players").LocalPlayer
-                        local stats = player.Character:WaitForChild("Stats")
-    
-                        -- Vérification des stats pour autoriser la transformation
-                        if stats.Strength.Value > 5000 and stats.Defense.Value > 5000 and stats.Energy.Value > 5000 and stats.Speed.Value > 5000 then
-                            local currentTransfo = player.Status.Transformation.Value
-                            local bestTransfo = nil
-    
-                            -- Trouver la meilleure transformation disponible selon les stats
-                            for _, v in ipairs(Forms) do
-                                if equipRemote:InvokeServer(v) then
-                                    bestTransfo = v
-                                    break
-                                end
-                            end
-    
-                            -- Vérifier si une meilleure transformation est disponible
-                            if bestTransfo and bestTransfo ~= currentTransfo then
-                                -- Si une transformation différente est nécessaire
-                                if currentTransfo ~= "" then
-                                    taRemote:InvokeServer() -- Se détransformer uniquement si déjà transformé
-                                    task.wait()
-                                end
-    
-                                -- Équiper la nouvelle transformation
-                                equipRemote:InvokeServer(bestTransfo)
-                                task.wait()
-    
-                                -- Vérifier si l'équipement a fonctionné avant de tenter de se transformer
-                                if player.Status.Transformation.Value == bestTransfo then
-                                    -- Si transformation réussie, invoquer la transformation une seule fois
-                                    if lastTransformation ~= bestTransfo then
-                                        taRemote:InvokeServer() -- Transformation activée
-                                        lastTransformation = bestTransfo -- Mémorise la transformation
-                                    end
-                                else
-                                    warn("Échec de l'équipement de la transformation : " .. tostring(bestTransfo))
-                                end
-                            end
-                        end
-                    end)
-    
-                    if not success then
-                        warn(fallo)
-                    end
-                end
-            end)
-        end)
-    end
-    
-    
-
-
-    local function loop5()
-        while true do
-            pcall(function()
-                if isLoop1Active then
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Workspace = game:GetService("Workspace")
-
-local lplr = Players.LocalPlayer
-
-pcall(function()
-    if lplr.PlayerGui:FindFirstChild("Start") then
-        ReplicatedStorage.Package.Events.Start:InvokeServer()
-
-        if Workspace.Others:FindFirstChild("Title") then
-            Workspace.Others.Title:Destroy()
-        end
-
-        local cam = Workspace.CurrentCamera
-        cam.CameraType = Enum.CameraType.Custom
-        cam.CameraSubject = lplr.Character.Humanoid
-
-        _G.Ready = true
-        game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, true)
-
-        lplr.PlayerGui.Main.Enabled = true
-
-        if lplr.PlayerGui:FindFirstChild("Start") then
-            lplr.PlayerGui.Start:Destroy()
-        end
-
-        pcall(function()
-            lplr.PlayerGui.Main.bruh.Enabled = false
-        end)
-        pcall(function()
-            lplr.PlayerGui.Main.bruh.Enabled = true
-        end)
-    end
-end)
-                    local s = game.Players.LocalPlayer.PlayerGui.Main.MainFrame.Frames.Quest
-s.Visible = false
-s.Position = UDim2.new(0.01, 0, 0.4, 0)
-
-spawn(function()
-    while true do
-        local success, err = pcall(function()
-            s.Position = UDim2.new(2, 0, 0, 0)
-            task.wait(0.4)
-        end)
-
-        if not success then
-            warn("Error en loop5: " .. err)
-        end
-        task.wait()
-    end
-end)
-                end
-            end)
-            task.wait(1)
-        end
-    end
-
-    local function loop6()
-        pcall(function()
-firstquest = true
-autostack = false
-
-local Settings = {Tables = {Forms = {}}; Variables = {Farm = false}}
-setmetatable(Settings, {__index = function() warn('Dumbass') end})
-
-local equipRemote = game:GetService("ReplicatedStorage").Package.Events.equipskill
-local player = game.Players.LocalPlayer
-local data = game.ReplicatedStorage.Datas[player.UserId]
-local events = game:GetService("ReplicatedStorage").Package.Events
-local rs = game:GetService("RunService")
-
-local quests = {
-    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 25000 },
-    { name = "Oozaru", bossName = "Oozaru", requiredValue = 25000, endRange = math.huge },
-}
-
-function target()
-    local success, fallo = pcall(function()
-        targetted = game:GetService("Players").LocalPlayer.Name
-    end)
-
-    if not success then
-        warn("Error en target: " .. fallo)
-    end
-end
-
-target()
-
-local function autoquest()
-    local success, fallo = pcall(function()
-        repeat
-            task.wait(0.1)  -- Pequeño retraso para evitar la sobrecarga
-        until game.workspace.Living[targetted]
-
-        local a, b, c, d = data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value
-        local smallest = math.min(a, b, c, d)
-
-        for _, quest in ipairs(quests) do
-            if smallest >= quest.requiredValue and smallest <= quest.endRange then
-                SelectedQuests = quest.name
-                SelectedMobs = quest.bossName
-                break
-            end
-        end
-
-        if firstquest then
-            lastquest = SelectedQuests
-            firstquest = false
-        end
-
-        if autostack and smallest > 8000 then
-            if lastquest ~= SelectedQuests and isLoop6Active then
-                game.workspace.Living[targetted].UpperTorso:Destroy()
-                getgenv().stacked = false
-                repeat
-                    task.wait(0.5)  -- Pausa entre cada ciclo
-                until player.Character.Humanoid.Health > 0
-            end
-            lastquest = SelectedQuests
-        end
-    end)
-
-    if not success then
-        warn("Error en autoquest: " .. fallo)
-    end
-end
-
-
-getgenv().stacked = false
-
-local function quest()
-    local success, fallo = pcall(function()
-        local npc = game:GetService("Workspace").Others.NPCs:FindFirstChild(SelectedQuests)
-
-        if game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value ~= SelectedQuests and isLoop6Active then
-            if npc and npc:FindFirstChild("HumanoidRootPart") then
-                player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame
-                local args = {npc} -- Se pasa el NPC encontrado como argumento
-                game:GetService("ReplicatedStorage").Package.Events.Qaction:InvokeServer(unpack(args))
-            end
-        end
-    end)
-
-    if not success then
-        warn("Error en quest: " .. fallo)
-    end
-end
-
-task.spawn(autoquest)
-task.spawn(quest)
-
-local function tpToBoss(boss)
-    local success, fallo = pcall(function()
-        if player.Character:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("HumanoidRootPart") then
-            player.Character.HumanoidRootPart.CFrame = boss.HumanoidRootPart.CFrame * CFrame.new(0, 0, 4)
-        end
-    end)
-
-    if not success then
-        warn("Error en tpToBoss: " .. fallo)
-    end
-end
-
-task.spawn(function()
-    while true do
-        task.wait()
-        pcall(function()
-            while true do
-                task.wait()
-                if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    for i, v in ipairs(game:GetService("Workspace").Living:GetChildren()) do
-                        autoquest()
-                        if v.Name:lower() == SelectedMobs:lower() and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 and isLoop6Active then
-                            quest()
-                            getgenv().farm = true
-                            repeat
-                                task.wait()
-                                player.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 4)
-                            until getgenv().farm == false or v == nil or v.Humanoid.Health <= 0 or player.Character.Humanoid.Health <= 0
-                            if player.Character.Humanoid.Health <= 0 then
-                                getgenv().farm = false
-                                getgenv().stacked = false
-                                repeat
-                                    task.wait()
-                                until player.Character.Humanoid.Health >= 0
-                                task.wait()
-                            end
-                        end
-                    end
-                end
-            end
-        end)
-    end
-end)
-
-
-task.spawn(function()
-    while true do
-        task.wait(0.4)
-        local succes,fallo = pcall(function()
-            if data.Strength.Value >= 25000 and game:GetService("ReplicatedStorage").Datas[player.UserId].Quest.Value == "" and isLoop6Active then
-                local kidNohag = game:GetService("Workspace").Others.NPCs["Kid Nohag"]
-                if kidNohag and kidNohag:FindFirstChild("HumanoidRootPart") and isLoop6Active then
-                    player.Character.HumanoidRootPart.CFrame = kidNohag.HumanoidRootPart.CFrame
-                    local args = { kidNohag }
-                    game:GetService("ReplicatedStorage").Package.Events.Qaction:InvokeServer(unpack(args)) -- Inicia la misión
-                end
-            end
-        end)
-        if not succes then
-            warn(fallo)
-        end
-    end
-end)
-
-task.spawn(function()
-    while true do
-        task.wait(0.3)
-        local succes, fallo = pcall(function()
-            if isLoop6Active then
-                local currentGameHour = math.floor(game.Lighting.ClockTime)
-                local playerCount = #game.Players:GetPlayers()
-                if currentGameHour >= 6 and currentGameHour < 12 then
-                    game.ReplicatedStorage.Package.Events.TP:InvokeServer("Earth")
-                elseif playerCount > 1 then
-                    game.ReplicatedStorage.Package.Events.TP:InvokeServer("Earth")
-                end                
-            end
-        end)
-        if not succes then
-            warn(fallo)
-        end
-    end
-end)
-
-task.spawn(function()
-    while true do
-        if isLoop6Active then
-            task.wait(0.1)
-
-
-            local yo = game.Players.LocalPlayer
-            local mission = ReplicatedStorage.Datas[yo.UserId].Quest
-
-
-            if not mission or mission.Value == "" then
-                task.wait(.05)  
-                continue
-            end
-
-            local currentGameHour = math.floor(game.Lighting.ClockTime)
-
-            if currentGameHour >= 20 or currentGameHour < 6 then
-                continue  
-            end
-
-            local success, fallo = pcall(function()
-                local maxDist = 50
-                local bossName = "Halloween Boss"
-
-                yo.Character:SetPrimaryPartCFrame(CFrame.new(-35233.1953125, 18.168001174926758, -28942.220703125))
-
-                local boss = nil
-                for _, v in ipairs(game.Workspace.Living:GetChildren()) do
-                    if v:IsA("Model") and v.Name == bossName and v:FindFirstChild("HumanoidRootPart") then
-                        if (yo.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude <= maxDist then
-                            boss = v
-                            break
-                        end
-                    end
-                end
-
-                yo.Character:SetPrimaryPartCFrame(boss and CFrame.new(boss.HumanoidRootPart.Position) or CFrame.new(-35233.1953125, 18.168001174926758, -28942.220703125))
-            end)
-
-            if not success then
-                warn("Error al invocar el evento rebirth: " .. fallo)
-            end
-        end
-        task.wait(0.1)
-    end
-end)
-
-task.spawn(function()
-    local tpCount = 0
-
-    while true do
-        local currentGameHour = math.floor(game.Lighting.ClockTime)
-
-        if currentGameHour == 20 and tpCount < 2 then
-            if tpCount == 0 then
-                local success, errorMsg = pcall(function()
-                    game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-41388.765625, 92.34290313720703, -29013.48046875))
-                end)
-                if success then
-                    tpCount = tpCount + 1
-                    task.wait(5)
-                    if tpCount == 1 then
-                        local success2, errorMsg2 = pcall(function()
-                            game.Players.LocalPlayer.Character:SetPrimaryPartCFrame(CFrame.new(-41388.765625, 92.34290313720703, -29013.48046875))
-                        end)
-                        if not success2 then
-                            warn("Error al realizar el segundo teletransporte: " .. errorMsg2)
-                        else
-                            tpCount = tpCount + 1
-                        end
-                    end
-                else
-                    warn("Error al realizar el primer teletransporte: " .. errorMsg)
-                end
-            end
-        end
-
-        task.wait(0.1)
-    end
-end)
-
-            task.wait(.1)
-    end)
-end
 
 local function loop7()
 pcall(function()
