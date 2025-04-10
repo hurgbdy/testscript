@@ -1,5 +1,5 @@
 
-wait(0)
+wait(0.5)
 local MenuPanel = game.CoreGui:FindFirstChild("SB team")
 local playerCount = game.Players:GetPlayers()
 
@@ -14,7 +14,7 @@ pcall(function()
                 MenuPanel:Destroy()
             end
         end)
-        wait(1.5)
+        wait(0.5)
         pcall(function()
             game:Shutdown()
         end)
