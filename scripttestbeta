@@ -2,44 +2,26 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-local generatedKey = "https://lootlabs.net/key-system/5e0d4ff2259d74a36ffccfeafe4c0e414d67fa5965b8e47f923a40fa6e5262a9/"..HttpService:GenerateGUID(false)
+-- 🔐 Ton vrai lien LootLabs (à ne pas modifier)
+local lootlabsLink = "https://lootlabs.net/key-system/5e0d4ff2259d74a36ffccfeafe4c0e414d67fa5965b8e47f923a40fa6e5262a9"
 
-setclipboard(generatedKey)
-print("Lien copié : ", generatedKey)
-
-
--- Exemple simple de check key
-local key = "clé_que_le_joueur_a_mis"
-local isValid = false
-
-local success, response = pcall(function()
-    return game:HttpGet("https://your-website.com/keys/"..key..".txt") -- ou .lua
-end)
-
-if success and response then
-    isValid = true
-    loadstring(response)()
-else
-    warn("Clé invalide ou expirée.")
-end
-
-
-
--- Bouton GET KEY
+-- 🎯 Copier le lien dans le presse-papiers
 GetKey.MouseButton1Click:Connect(function()
-    local link = "https://lootlabs.net/key-system/5e0d4ff2259d74a36ffccfeafe4c0e414d67fa5965b8e47f923a40fa6e5262a9/"..HttpService:GenerateGUID(false)
-    setclipboard(link)
-    print("Lien LootLabs copié.")
+	setclipboard(lootlabsLink)
+	print("Lien LootLabs copié :", lootlabsLink)
 end)
 
--- Bouton CHECK KEY
+-- ✅ Vérification de la clé
 CheckKey.MouseButton1Click:Connect(function()
-    local key = textBox.Text
-    local response = game:HttpGet("https://yourserver.com/keys/"..key)
+	local key = textBox.Text -- la clé entrée par l'utilisateur
+	local response
+	local success, result = pcall(function()
+		response = game:HttpGet("https://yourserver.com/keys/"..key..".txt")
+	end)
 
-    if response then
-        loadstring(response)()
-    else
-        warn("Clé invalide ou expirée.")
-    end
+	if success and response then
+		loadstring(response)()
+	else
+		warn("Clé invalide ou expirée.")
+	end
 end)
