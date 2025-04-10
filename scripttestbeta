@@ -496,7 +496,7 @@ local lastPlaceId = game.PlaceId
 
 task.spawn(function()
     while true do
-        task.wait(1)  -- Attendre une seconde à chaque itération
+        task.wait(5)  -- Attendre 5 secondes entre chaque vérification pour réduire les ressources utilisées
 
         if isLoop1Active then
             -- Vérification si le PlaceId a changé
