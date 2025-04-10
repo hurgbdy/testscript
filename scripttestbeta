@@ -683,21 +683,19 @@ spawn(function()
     end
 end)
 
-
 task.spawn(function()
     while true do
         task.wait()
 
-        -- On vérifie que loop1 est actif et que missions est bien rempli
-        if  #missions > 0 then
+        -- On vérifie que loop1 est actif et que missions est une table remplie
+        if type(missions) == "table" and #missions > 0 then
             task.spawn(function()
                 local player = game.Players.LocalPlayer
                 local data = game.ReplicatedStorage.Datas[player.UserId]
                 local mission = data.Quest.Value
 
                 if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-                    warn("⚠️ ERREUR: Le joueur ou son HumanoidRootPart est introuvable !")
-                    return
+                    return  -- Pas besoin d'afficher un avertissement, on peut juste retourner si ce n'est pas trouvé
                 end
 
                 local bossName
@@ -709,8 +707,7 @@ task.spawn(function()
                 end
 
                 if not bossName then
-                    warn("⚠️ Aucun boss correspondant trouvé pour la mission:", mission)
-                    return
+                    return  -- Si aucun boss n'est trouvé, on arrête la fonction
                 end
 
                 local bossCount = 0
@@ -723,21 +720,21 @@ task.spawn(function()
                         local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
 
                         player.Character.HumanoidRootPart.CFrame = behindPosition
-                        warn("✅ Joueur téléporté derrière le boss:", boss.Name, " | Position:", behindPosition.Position)
 
                         task.wait()
                     end
                 end
 
                 if bossCount == 0 then
-                    warn("⚠️ Aucun boss trouvé avec le nom:", bossName)
+                    -- Optionnel : action si aucun boss n'est trouvé
                 else
-                    warn("✅ Nombre total de boss traités:", bossCount)
+                    -- Optionnel : action si des boss sont trouvés
                 end
             end)
         end
     end
 end)
+
 
 
 
