@@ -103,7 +103,7 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 local TextLabel = Instance.new("TextLabel")
 TextLabel.Parent = ScreenGui
 TextLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)  -- Gris foncé pour le fond
-TextLabel.BackgroundTransparency = 0.2  -- Transparence moyenne
+TextLabel.BackgroundTransparency = 0.1  -- Transparence moyenne
 TextLabel.BorderSizePixel = 2  -- Taille du contour
 TextLabel.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Contour rouge
 TextLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -138,8 +138,10 @@ bottomLine.Parent = MenuPanel
 bottomLine.Size = UDim2.new(1, 0, 0, 3)
 bottomLine.Position = UDim2.new(0, 0, 1, -2)
 bottomLine.BackgroundColor3 = Color3.fromRGB(109, 109, 109)  -- Gris moyen
-bottomLine.BackgroundTransparency = 0.2 -- Légèrement transparent
+bottomLine.BackgroundTransparency = 0.3  -- Légèrement transparent
 bottomLine.BorderSizePixel = 0
+
+
 
 
 
@@ -433,7 +435,7 @@ local function toggleSwitch(isActive, switchBall)
             switchBall.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         else
             switchBall.Position = UDim2.new(0, 5, 0.5, -15)
-            switchBall.BackgroundColor3 = Color3.fromRGB(128, 0, 255)
+            switchBall.BackgroundColor3 = Color3.fromRGB(255, 21, 0)
         end
     end)
 end
@@ -463,6 +465,7 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
             local events = game:GetService("ReplicatedStorage").Package.Events
             
 -- Liste de missions pour le jeu avec l'ID 3311165597
+-- Définir les listes de missions
 local missions_Planet = {
     { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
     { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
@@ -473,7 +476,6 @@ local missions_Planet = {
     { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge }
 }
 
--- Liste de missions pour le jeu avec l'ID 5151400895
 local missions_VillsPlanet = {
     { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 350000001, endRange = 700000000 },
     { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 700000001, endRange = 1000000000 },
@@ -484,14 +486,33 @@ local missions_VillsPlanet = {
     { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
 }
 
--- Variable pour stocker la liste des missions active
-if game.PlaceId == 3311165597 then
-    missions = missions_Planet
-elseif game.PlaceId == 5151400895 then
-    missions = missions_VillsPlanet
+-- Initialiser la variable missions vide
+local missions = {}
+
+-- Vérifier si isLoop1Active est vrai et sélectionner les missions en fonction de l'emplacement
+print("Valeur actuelle de isLoop1Active:", isLoop1Active)
+if isLoop1Active then
+    print("isLoop1Active est vrai")
+    if game.PlaceId == 3311165597 then
+        print("PlaceId est 3311165597, missions = missions_Planet")
+        missions = missions_Planet  -- Assignation de la liste missions_Planet
+    elseif game.PlaceId == 5151400895 then
+        print("PlaceId est 5151400895, missions = missions_VillsPlanet")
+        missions = missions_VillsPlanet  -- Assignation de la liste missions_VillsPlanet
+    else
+        print("PlaceId inconnu, missions = {}")
+        missions = {}  -- Liste vide si le joueur n'est pas dans les zones définies
+    end
 else
-    missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
+    warn("isLoop1Active est faux, le bloc ne sera pas exécuté")
 end
+
+-- Afficher les missions sélectionnées
+print("Missions actuelles:", missions)
+
+
+
+
 
 
 -- Le reste de ton code où tu utilises la liste `missions`
@@ -514,6 +535,7 @@ local function getQuestByStat(stat)
 end
 
 local function assignQuest()
+    
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
 
     local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
@@ -572,9 +594,10 @@ task.spawn(function()
     while true do
         task.wait()
         pcall(function()
+            
             assignQuest()
             local questData = game:GetService("ReplicatedStorage").Datas:FindFirstChild(player.UserId)
-            if questData and questData:FindFirstChild("Quest") and questData.Quest.Value == "" then
+            if questData and questData:FindFirstChild("Quest") and questData.Quest.Value == ""  then
                 startMission()
             end
         end)
@@ -891,7 +914,7 @@ end)
     local function loop5()
         while true do
             pcall(function()
-                if isLoop3Active then
+                if isLoop1Active then
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
