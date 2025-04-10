@@ -106,7 +106,7 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 local TextLabel = Instance.new("TextLabel")
 TextLabel.Parent = ScreenGui
 TextLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)  -- Gris foncé pour le fond
-TextLabel.BackgroundTransparency = 0.5  -- Transparence moyenne
+TextLabel.BackgroundTransparency = 0.2  -- Transparence moyenne
 TextLabel.BorderSizePixel = 2  -- Taille du contour
 TextLabel.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Contour rouge
 TextLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -141,7 +141,7 @@ bottomLine.Parent = MenuPanel
 bottomLine.Size = UDim2.new(1, 0, 0, 3)
 bottomLine.Position = UDim2.new(0, 0, 1, -2)
 bottomLine.BackgroundColor3 = Color3.fromRGB(109, 109, 109)  -- Gris moyen
-bottomLine.BackgroundTransparency = 0.3  -- Légèrement transparent
+bottomLine.BackgroundTransparency = 0.2 -- Légèrement transparent
 bottomLine.BorderSizePixel = 0
 
 
