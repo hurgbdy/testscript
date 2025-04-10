@@ -1,3 +1,55 @@
+-- Attendre que ReplicatedStorage et Datas soient prêts
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+repeat wait() until ReplicatedStorage:FindFirstChild("Datas") and ReplicatedStorage:FindFirstChild("Package") and ReplicatedStorage:FindFirstChild("Events")
+repeat wait() until ReplicatedStorage.Datas:FindFirstChild(player.UserId)
+
+local data = ReplicatedStorage.Datas[player.UserId]
+local events = ReplicatedStorage:WaitForChild("Events")
+
+
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local dataLoaded = false
+repeat
+    local success, result = pcall(function()
+        return ReplicatedStorage.Datas:FindFirstChild(player.UserId)
+    end)
+    if success and result then
+        dataLoaded = true
+        data = result
+    else
+        task.wait(1)
+    end
+until dataLoaded
+
+local events = ReplicatedStorage:WaitForChild("Events")
+
+
+
+local function waitForData()
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local playerData
+    repeat
+        local success, result = pcall(function()
+            return ReplicatedStorage:FindFirstChild("Datas"):FindFirstChild(player.UserId)
+        end)
+        if success and result then
+            playerData = result
+        else
+            task.wait(1)
+        end
+    until playerData
+    return playerData
+end
+
+local data = waitForData()
+
+
+
 wait(1.5)
 local MenuPanel = game.CoreGui:FindFirstChild("SB team")
 local playerCount = game.Players:GetPlayers()
