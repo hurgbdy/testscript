@@ -93,6 +93,9 @@ local thumbnailUrl = Players:GetUserThumbnailAsync(userId, thumbnailType, thumbn
 
 local UICorner = Instance.new("UICorner")
 
+
+
+
 -- Configuración de GUI
 ScreenGui.Name = "SB team"
 ScreenGui.Parent = player.PlayerGui
