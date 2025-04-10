@@ -96,81 +96,53 @@ local UICorner = Instance.new("UICorner")
 
 
 
--- Création du ScreenGui
-local ScreenGui = Instance.new("ScreenGui")
+-- Configuración de GUI
 ScreenGui.Name = "SB team"
+ScreenGui.Parent = player.PlayerGui
+ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ScreenGui.Parent = game.CoreGui
 
--- Fonction pour ajouter un UICorner propre
-local function addUICornerTo(guiObject)
-	if guiObject:IsA("Frame") or guiObject:IsA("TextButton") or guiObject:IsA("TextBox")
-		or guiObject:IsA("ImageButton") or guiObject:IsA("ScrollingFrame") or guiObject:IsA("ImageLabel") or guiObject:IsA("TextLabel") then
-		if not guiObject:FindFirstChildOfClass("UICorner") then
-			local corner = Instance.new("UICorner")
-			corner.CornerRadius = UDim.new(0, 6) -- <--- Arrondi propre ici
-			corner.Parent = guiObject
-		end
-	end
-end
-
--- Applique aux futurs objets
-ScreenGui.DescendantAdded:Connect(addUICornerTo)
-
--- Création des éléments de l'UI
 local TextLabel = Instance.new("TextLabel")
 TextLabel.Parent = ScreenGui
-TextLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-TextLabel.BackgroundTransparency = 0.2
-TextLabel.BorderSizePixel = 2
-TextLabel.BorderColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)  -- Gris foncé pour le fond
+TextLabel.BackgroundTransparency = 0.2  -- Transparence moyenne
+TextLabel.BorderSizePixel = 2  -- Taille du contour
+TextLabel.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Contour rouge
 TextLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
 TextLabel.Size = UDim2.new(0, 410, 0, 30)
 TextLabel.Font = Enum.Font.SourceSans
 TextLabel.Text = "SB team     V3                  "
-TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)  -- Texte rouge
 TextLabel.TextScaled = true
 TextLabel.Active = true
 TextLabel.Draggable = true
 
-local MenuPanel = Instance.new("Frame")
 MenuPanel.Parent = TextLabel
-MenuPanel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-MenuPanel.BorderColor3 = Color3.fromRGB(255, 0, 0)
+MenuPanel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)  -- Gris clair pour le MenuPanel
+MenuPanel.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Bordure rouge
 MenuPanel.BorderSizePixel = 2
 MenuPanel.Position = UDim2.new(0, 0, 1, 0)
 MenuPanel.Size = UDim2.new(0, 410, 0, 400)
 MenuPanel.Visible = false
 
-local MinimizeButton = Instance.new("TextButton")
 MinimizeButton.Parent = TextLabel
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-MinimizeButton.BorderColor3 = Color3.fromRGB(35, 35, 35)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Rouge
+MinimizeButton.BorderColor3 = Color3.fromRGB(35, 35, 35)  -- Gris foncé
 MinimizeButton.BorderSizePixel = 2
 MinimizeButton.Position = UDim2.new(0.9, 10, 0.5, -14)
 MinimizeButton.Size = UDim2.new(0, 30, 0, 26)
 MinimizeButton.Font = Enum.Font.SourceSans
 MinimizeButton.Text = ""
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Texte blanc
 MinimizeButton.TextSize = 18
 
-local bottomLine = Instance.new("Frame")
 bottomLine.Parent = MenuPanel
 bottomLine.Size = UDim2.new(1, 0, 0, 3)
 bottomLine.Position = UDim2.new(0, 0, 1, -2)
-bottomLine.BackgroundColor3 = Color3.fromRGB(109, 109, 109)
-bottomLine.BackgroundTransparency = 0.2
+bottomLine.BackgroundColor3 = Color3.fromRGB(109, 109, 109)  -- Gris moyen
+bottomLine.BackgroundTransparency = 0.2 -- Légèrement transparent
 bottomLine.BorderSizePixel = 0
-
--- Appliquer l’arrondi aux éléments déjà créés
-task.wait(0.1)
-for _, obj in pairs(ScreenGui:GetDescendants()) do
-	addUICornerTo(obj)
-end
-
-
-
 
 
 
