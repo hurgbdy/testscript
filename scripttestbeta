@@ -494,26 +494,24 @@ local missions_VillsPlanet = {
 
 local lastPlaceId = game.PlaceId
 
-task.spawn(function()
+function loop1()
     while true do
         task.wait(1)
-        if isLoop1Active then
-            -- Vérification si le PlaceId a changé
-            if game.PlaceId ~= lastPlaceId then
-                lastPlaceId = game.PlaceId
-                
-                if game.PlaceId == 3311165597 then
-                    missions = missions_Planet
-                elseif game.PlaceId == 5151400895 then
-                    missions = missions_VillsPlanet
-                else
-                    missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
-                end
+        
+        -- Vérification si le PlaceId a changé
+        if game.PlaceId ~= lastPlaceId then
+            lastPlaceId = game.PlaceId
+
+            if game.PlaceId == 3311165597 then
+                missions = missions_Planet
+            elseif game.PlaceId == 5151400895 then
+                missions = missions_VillsPlanet
+            else
+                missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
             end
         end
     end
-end)
-
+end
 
 
 
