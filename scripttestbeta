@@ -497,13 +497,13 @@ if isLoop1Active then
         missions = missions_VillsPlanet
         
     else
-        missions = {}
-       
+        missions = {}  -- Si aucun des PlaceId ne correspond, missions devient une table vide.
     end
 else
-    
+    -- Vous pouvez ajouter des actions ici si le `isLoop1Active` est false
+    -- Par exemple, réinitialiser missions ou d'autres actions selon ce que vous voulez faire
+    missions = {}  -- Par exemple, réinitialiser missions si isLoop1Active est false
 end
-
 
 
 
