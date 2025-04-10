@@ -464,7 +464,7 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
             local data = game.ReplicatedStorage.Datas[player.UserId]
             local events = game:GetService("ReplicatedStorage").Package.Events
             
-            local missions = nil  -- Initialiser missions à nil par défaut
+            local missions = {} -- Initialiser missions à nil par défaut
 
             while true do
                 if isLoop1Active then
@@ -516,7 +516,7 @@ local SelectedQuest
 local SelectedMob
 local isDoingAlternateQuest = false
 
-local missions = nil  -- Initialisation de missions
+local missions = {}-- Initialisation de missions
 
 -- Fonction pour vérifier si un boss est vivant
 local function BossIsAlive(mobName)
@@ -524,7 +524,6 @@ local function BossIsAlive(mobName)
     return boss and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0
 end
 
--- Fonction pour obtenir la quête en fonction des statistiques
 local function getQuestByStat(stat)
     local bestIndex = nil
     local closestRequiredValue = -math.huge
@@ -629,9 +628,6 @@ task.spawn(function()
         end
     end
 end)
-
-
-
 
 task.spawn(function()
     while true do
