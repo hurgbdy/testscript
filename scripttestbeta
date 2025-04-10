@@ -669,15 +669,16 @@ task.spawn(function()
     while true do
         task.wait()
 
-        -- On vérifie que loop1 est actif et que missions est une table remplie
-        if type(missions) == "table" and #missions > 0 then
+        -- On vérifie que loop1 est actif et que missions est bien rempli
+        if  #missions > 0 then
             task.spawn(function()
                 local player = game.Players.LocalPlayer
                 local data = game.ReplicatedStorage.Datas[player.UserId]
                 local mission = data.Quest.Value
 
                 if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-                    return  -- Pas besoin d'afficher un avertissement, on peut juste retourner si ce n'est pas trouvé
+                    warn("⚠️ ERREUR: Le joueur ou son HumanoidRootPart est introuvable !")
+                    return
                 end
 
                 local bossName
@@ -689,7 +690,8 @@ task.spawn(function()
                 end
 
                 if not bossName then
-                    return  -- Si aucun boss n'est trouvé, on arrête la fonction
+                    warn("⚠️ Aucun boss correspondant trouvé pour la mission:", mission)
+                    return
                 end
 
                 local bossCount = 0
@@ -702,15 +704,16 @@ task.spawn(function()
                         local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
 
                         player.Character.HumanoidRootPart.CFrame = behindPosition
+                        warn("✅ Joueur téléporté derrière le boss:", boss.Name, " | Position:", behindPosition.Position)
 
                         task.wait()
                     end
                 end
 
                 if bossCount == 0 then
-                    -- Optionnel : action si aucun boss n'est trouvé
+                    warn("⚠️ Aucun boss trouvé avec le nom:", bossName)
                 else
-                    -- Optionnel : action si des boss sont trouvés
+                    warn("✅ Nombre total de boss traités:", bossCount)
                 end
             end)
         end
