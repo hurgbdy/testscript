@@ -93,50 +93,55 @@ local thumbnailUrl = Players:GetUserThumbnailAsync(userId, thumbnailType, thumbn
 
 local UICorner = Instance.new("UICorner")
 
--- ConfiguraciÃ³n de GUI
+-- Configuración de GUI
 ScreenGui.Name = "SB team"
 ScreenGui.Parent = player.PlayerGui
 ScreenGui.Parent = game.CoreGui
 ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-
+local TextLabel = Instance.new("TextLabel")
 TextLabel.Parent = ScreenGui
-TextLabel.BackgroundColor3 = Color3.fromRGB(186, 85, 211) -- Violet clair
-TextLabel.BorderSizePixel = 0
-TextLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+TextLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)  -- Gris foncé pour le fond
+TextLabel.BackgroundTransparency = 0.1  -- Transparence moyenne
+TextLabel.BorderSizePixel = 2  -- Taille du contour
+TextLabel.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Contour rouge
+TextLabel.Position = UDim2.new(0.5, 0, 0.5, -50)
 TextLabel.Size = UDim2.new(0, 410, 0, 30)
 TextLabel.Font = Enum.Font.SourceSans
-TextLabel.Text = "SB team                               V2                  "
-TextLabel.TextColor3 = Color3.fromRGB(153, 102, 204)
+TextLabel.Text = "SB team     V3                  "
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)  -- Texte rouge
 TextLabel.TextScaled = true
-TextLabel.TextStrokeColor3 = Color3.fromRGB(255, 0, 0)
-TextLabel.TextStrokeTransparency = 0
 TextLabel.Active = true
 TextLabel.Draggable = true
 
 MenuPanel.Parent = TextLabel
-MenuPanel.BackgroundColor3 = Color3.fromRGB(72, 61, 139) -- Violet foncé
-MenuPanel.BorderSizePixel = 0
+MenuPanel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)  -- Gris clair pour le MenuPanel
+MenuPanel.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Bordure rouge
+MenuPanel.BorderSizePixel = 2
 MenuPanel.Position = UDim2.new(0, 0, 1, 0)
 MenuPanel.Size = UDim2.new(0, 410, 0, 400)
 MenuPanel.Visible = false
 
 MinimizeButton.Parent = TextLabel
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(123, 104, 238) -- Violet moyen
-MinimizeButton.BorderSizePixel = 0
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Rouge
+MinimizeButton.BorderColor3 = Color3.fromRGB(35, 35, 35)  -- Gris foncé
+MinimizeButton.BorderSizePixel = 2
 MinimizeButton.Position = UDim2.new(0.9, 10, 0.5, -14)
 MinimizeButton.Size = UDim2.new(0, 30, 0, 26)
 MinimizeButton.Font = Enum.Font.SourceSans
 MinimizeButton.Text = ""
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Texte blanc
 MinimizeButton.TextSize = 18
 
 bottomLine.Parent = MenuPanel
 bottomLine.Size = UDim2.new(1, 0, 0, 3)
 bottomLine.Position = UDim2.new(0, 0, 1, -2)
-bottomLine.BackgroundColor3 = Color3.fromRGB(75, 0, 130) -- Indigo
-bottomLine.BorderSizePixel = 0.6
+bottomLine.BackgroundColor3 = Color3.fromRGB(109, 109, 109)  -- Gris moyen
+bottomLine.BackgroundTransparency = 0.3  -- Légèrement transparent
+bottomLine.BorderSizePixel = 0
+
+
 
 
 
@@ -277,7 +282,7 @@ local function SaveMenuState(isExpanded)
     end)
 
     if not success then
-        warn("Error al guardar el estado del menú: " .. tostring(err))
+        
     end
 end
 
@@ -291,7 +296,7 @@ local function SaveMenuState(isExpanded)
     end)
 
     if not success then
-        warn("Error al guardar el estado del menú: " .. tostring(err))
+        
     end
 end
 
@@ -308,7 +313,7 @@ local function LoadMenuState()
     end)
 
     if not success then
-        warn("Error al cargar el estado del menú: " .. tostring(result))
+        
         return false
     end
 
@@ -347,7 +352,7 @@ MinimizeButton.MouseButton1Click:Connect(function()
     end)
 
     if not success then
-        warn("Error al minimizar/expandir el menú: " .. tostring(err))
+        
     end
 end)
 
@@ -430,7 +435,7 @@ local function toggleSwitch(isActive, switchBall)
             switchBall.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         else
             switchBall.Position = UDim2.new(0, 5, 0.5, -15)
-            switchBall.BackgroundColor3 = Color3.fromRGB(128, 0, 255)
+            switchBall.BackgroundColor3 = Color3.fromRGB(255, 21, 0)
         end
     end)
 end
@@ -459,35 +464,48 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
             local data = game.ReplicatedStorage.Datas[player.UserId]
             local events = game:GetService("ReplicatedStorage").Package.Events
             
- local missions_Planet = {
-                { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 4000 },
-                { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 4001, endRange = 12000  },
-                { name = "Radish", bossName = "Radish", requiredValue = 12001, endRange = 1200000  },
-                { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue  = 1200001 , endRange = 2200000 },
-                { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue  = 2200001  , endRange = 6200000 },
-                { name = "Broccoli", bossName = "Broccoli", requiredValue = 6200001 , endRange = 12200000  },
-                { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 12200001, endRange = math.huge }
- }
-            
-            -- Liste de missions pour le jeu avec l'ID 5151400895
- local missions_VillsPlanet = {
-                { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 250000001, endRange = 450000000 },
-                { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 450000001 , endRange = 750000000 },
-                { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 750000001 , endRange = 1250000000 },
-                { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 1250000001 , endRange = 1750000000  },
-                { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 1750000001 , endRange = 1950000000 },
-                { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 1950000001 , endRange = 2500000000 },
-                { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 2500000001 , endRange = math.huge }
+-- Liste de missions pour le jeu avec l'ID 3311165597
+local missions_Planet = {
+    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 4000 },
+    { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 4001, endRange = 12000  },
+    { name = "Radish", bossName = "Radish", requiredValue = 12001, endRange = 1200000  },
+    { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue  = 1200001 , endRange = 2200000 },
+    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue  = 2200001  , endRange = 6200000 },
+    { name = "Broccoli", bossName = "Broccoli", requiredValue = 6200001 , endRange = 12200000  },
+    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 12200001, endRange = math.huge }
 }
 
--- Variable pour stocker la liste des missions active
-if game.PlaceId == 3311165597 then
-    missions = missions_Planet
-elseif game.PlaceId == 5151400895 then
-    missions = missions_VillsPlanet
+-- Liste de missions pour le jeu avec l'ID 5151400895
+local missions_VillsPlanet = {
+    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 250000001, endRange = 450000000 },
+    { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 450000001 , endRange = 750000000 },
+    { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 750000001 , endRange = 1250000000 },
+    { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 1250000001 , endRange = 1750000000  },
+    { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 1750000001 , endRange = 1950000000 },
+    { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 1950000001 , endRange = 2500000000 },
+    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 2500000001 , endRange = math.huge }
+}
+        
+
+
+
+if isLoop1Active then
+    if game.PlaceId == 3311165597 then
+        missions = missions_Planet
+        
+    elseif game.PlaceId == 5151400895 then
+        missions = missions_VillsPlanet
+        
+    else
+        missions = {}  -- Si aucun des PlaceId ne correspond, missions devient une table vide.
+    end
 else
-    missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
+    -- Vous pouvez ajouter des actions ici si le `isLoop1Active` est false
+    -- Par exemple, réinitialiser missions ou d'autres actions selon ce que vous voulez faire
+    missions = {}  -- Par exemple, réinitialiser missions si isLoop1Active est false
 end
+
+
 
 
 -- Le reste de ton code où tu utilises la liste `missions`
@@ -501,15 +519,27 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
+    local bestIndex = nil
+    local closestRequiredValue = -math.huge
+
     for i, mission in ipairs(missions) do
-        if stat >= mission.requiredValue and stat <= mission.endRange then
-            return mission.name, mission.bossName, i
+        if mission.requiredValue <= stat and mission.requiredValue > closestRequiredValue then
+            bestIndex = i
+            closestRequiredValue = mission.requiredValue
         end
     end
+
+    if bestIndex then
+        local mission = missions[bestIndex]
+        return mission.name, mission.bossName, bestIndex
+    end
+
     return nil, nil, nil
 end
 
+
 local function assignQuest()
+    
     local lowestStat = math.min(data.Strength.Value, data.Energy.Value, data.Defense.Value, data.Speed.Value)
 
     local currentQuest, currentMob, questIndex = getQuestByStat(lowestStat)
@@ -521,19 +551,19 @@ local function assignQuest()
     end
 
     if not currentQuest then
-        warn("[INFO] Aucune quête disponible pour cette stat.")
+        
         return
     end
 
     if isDoingAlternateQuest and previousQuest and BossIsAlive(previousMob) then
         SelectedQuest = previousQuest
         SelectedMob = previousMob
-        warn("[INFO] Passage à la quête précédente : " .. previousQuest)
+       
     else
         SelectedQuest = currentQuest
         SelectedMob = currentMob
         isDoingAlternateQuest = not isDoingAlternateQuest
-        warn("[INFO] Passage à la quête principale : " .. currentQuest)
+        
     end
 end
 
@@ -556,7 +586,7 @@ local function startMission()
             player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
             task.wait()
             events.Qaction:InvokeServer(npc)
-            warn("[INFO] Quête acceptée : " .. SelectedQuest)
+           
         end
     end)
 
@@ -568,9 +598,10 @@ task.spawn(function()
     while true do
         task.wait()
         pcall(function()
+            
             assignQuest()
             local questData = game:GetService("ReplicatedStorage").Datas:FindFirstChild(player.UserId)
-            if questData and questData:FindFirstChild("Quest") and questData.Quest.Value == "" then
+            if questData and questData:FindFirstChild("Quest") and questData.Quest.Value == ""  then
                 startMission()
             end
         end)
@@ -584,7 +615,7 @@ task.spawn(function()
     while true do
         task.wait(0.5)  -- Vérification toutes les 0.5 secondes
         local success, fallo = pcall(function()
-            if data.Strength.Value < 350000000 and game.PlaceId ~= 3311165597 and isLoop3Active then
+            if data.Strength.Value < 250000001 and game.PlaceId ~= 3311165597 and isLoop3Active then
                 local A_1 = "Earth"
                 local Event = events.TP
                 if game.PlaceId ~= 3311165597 then
@@ -592,7 +623,7 @@ task.spawn(function()
                     print("Teleporting to Earth")
                     task.wait(8)  -- Attendre 8 secondes après la TP pour éviter le spam
                 end
-            elseif data.Strength.Value >= 350000001 and game.PlaceId ~= 5151400895 and isLoop3Active then
+            elseif data.Strength.Value >= 250000001 and game.PlaceId ~= 5151400895 and isLoop3Active then
                 local A_1 = "Vills Planet"
                 local Event = events.TP
                 if game.PlaceId ~= 5151400895 then
@@ -604,7 +635,7 @@ task.spawn(function()
         end)
 
         if not success then
-            warn("Error executing teleportation: " .. fallo)
+            
         end
     end
 end)
@@ -620,7 +651,7 @@ task.spawn(function()
             end)
 
             if not success then
-                warn("Error al invocar el evento rebirth: " .. fallo)
+                
             end
         end
     end
@@ -652,7 +683,7 @@ task.spawn(function()
                 local mission = data.Quest.Value
 
                 if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-                    warn("⚠️ ERREUR: Le joueur ou son HumanoidRootPart est introuvable !")
+                    
                     return
                 end
 
@@ -665,7 +696,7 @@ task.spawn(function()
                 end
 
                 if not bossName then
-                    warn("⚠️ Aucun boss correspondant trouvé pour la mission:", mission)
+                    
                     return
                 end
 
@@ -673,22 +704,22 @@ task.spawn(function()
                 for _, boss in ipairs(game.Workspace.Living:GetChildren()) do
                     if boss.Name == bossName and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
                         bossCount += 1
-                        player.Status.Blocking.Value = false  
+                        player.Status.Blocking.Value = true
 
                         local enemyHRP = boss.HumanoidRootPart
                         local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
 
                         player.Character.HumanoidRootPart.CFrame = behindPosition
-                        warn("✅ Joueur téléporté derrière le boss:", boss.Name, " | Position:", behindPosition.Position)
+                       
 
                         task.wait()
                     end
                 end
 
                 if bossCount == 0 then
-                    warn("⚠️ Aucun boss trouvé avec le nom:", bossName)
+                    
                 else
-                    warn("✅ Nombre total de boss traités:", bossCount)
+                    
                 end
             end)
         end
@@ -799,7 +830,7 @@ local function updateStatsGui()
     end)
 
     if not success then
-        warn("Error al actualizar GUI de estadísticas:", err)
+        
     end
 end
 
@@ -819,6 +850,8 @@ end)
         end
     end
 
+ 
+        
     local function loop3()
         pcall(function()
             task.spawn(function()
@@ -826,7 +859,7 @@ end)
                     task.wait()
     
                     local success, fallo = pcall(function()
-                        local Forms = {'Ego Instinct','Divine Blue','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
+                        local Forms = {'Divine Blue','Divine Rose Prominence','Astral Instinct','Ultra Ego','SSJB4','True God of Creation','True God of Destruction','Super Broly', 
                                        'LSSJG','LSSJ4','SSJG4','LSSJ3','Mystic Kaioken','LSSJ Kaioken','SSJR3','SSJB3','God Of Destruction','God Of Creation',
                                        'Jiren Ultra Instinct', 'Mastered Ultra Instinct','Godly SSJ2', 'Ultra Instinct Omen', 'Evil SSJ','Blue Evolution',
                                        'Dark Rose','Kefla SSJ2','SSJ Berserker','True Rose', 'SSJB Kaioken','SSJ Rose', 'SSJ Blue','Corrupt SSJ',
@@ -881,13 +914,12 @@ end)
     end
     
     
-    
 
 
     local function loop5()
         while true do
             pcall(function()
-                if isLoop3Active then
+                if isLoop1Active then
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
@@ -935,7 +967,7 @@ spawn(function()
         end)
 
         if not success then
-            warn("Error en loop5: " .. err)
+            
         end
         task.wait()
     end
@@ -1033,7 +1065,7 @@ local function quest()
     end)
 
     if not success then
-        warn("Error en quest: " .. fallo)
+        
     end
 end
 
