@@ -103,22 +103,22 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = game.CoreGui
 
--- Fonction pour ajouter UICorner avec un gros arrondi
+-- Fonction pour ajouter un UICorner propre
 local function addUICornerTo(guiObject)
 	if guiObject:IsA("Frame") or guiObject:IsA("TextButton") or guiObject:IsA("TextBox")
-		or guiObject:IsA("ImageButton") or guiObject:IsA("ScrollingFrame") or guiObject:IsA("ImageLabel") then
+		or guiObject:IsA("ImageButton") or guiObject:IsA("ScrollingFrame") or guiObject:IsA("ImageLabel") or guiObject:IsA("TextLabel") then
 		if not guiObject:FindFirstChildOfClass("UICorner") then
 			local corner = Instance.new("UICorner")
-			corner.CornerRadius = UDim.new(0.8, 0)
+			corner.CornerRadius = UDim.new(0, 6) -- <--- Arrondi propre ici
 			corner.Parent = guiObject
 		end
 	end
 end
 
--- Application aux futurs éléments
+-- Applique aux futurs objets
 ScreenGui.DescendantAdded:Connect(addUICornerTo)
 
--- Création de l’interface
+-- Création des éléments de l'UI
 local TextLabel = Instance.new("TextLabel")
 TextLabel.Parent = ScreenGui
 TextLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
@@ -163,7 +163,7 @@ bottomLine.BackgroundColor3 = Color3.fromRGB(109, 109, 109)
 bottomLine.BackgroundTransparency = 0.2
 bottomLine.BorderSizePixel = 0
 
--- Attendre la fin du chargement puis appliquer le style aux éléments déjà présents
+-- Appliquer l’arrondi aux éléments déjà créés
 task.wait(0.1)
 for _, obj in pairs(ScreenGui:GetDescendants()) do
 	addUICornerTo(obj)
