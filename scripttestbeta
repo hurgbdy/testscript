@@ -659,19 +659,25 @@ local function startMission()
 end
 
 task.spawn(function()
+    -- On attend que les datas du joueur soient bien là
+    repeat
+        task.wait()
+    until game:GetService("ReplicatedStorage"):FindFirstChild("Datas") 
+        and game:GetService("ReplicatedStorage").Datas:FindFirstChild(player.UserId)
+
+    local datas = game:GetService("ReplicatedStorage").Datas
+    local questData = datas[player.UserId]
+
     while true do
         task.wait()
         pcall(function()
-            
             assignQuest()
-            local questData = game:GetService("ReplicatedStorage").Datas:FindFirstChild(player.UserId)
-            if questData and questData:FindFirstChild("Quest") and questData.Quest.Value == ""  then
+            if questData and questData:FindFirstChild("Quest") and questData.Quest.Value == "" then
                 startMission()
             end
         end)
     end
 end)
-
 
 
 
