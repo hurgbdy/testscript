@@ -494,7 +494,7 @@ local missions_VillsPlanet = {
 
 local lastPlaceId = game.PlaceId
 
-function loop1()
+local function loop1()
     while true do
         task.wait(1)
         
