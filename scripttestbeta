@@ -105,44 +105,61 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 local TextLabel = Instance.new("TextLabel")
 TextLabel.Parent = ScreenGui
-TextLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)  -- Gris foncé pour le fond
-TextLabel.BackgroundTransparency = 0.2  -- Transparence moyenne
-TextLabel.BorderSizePixel = 2  -- Taille du contour
-TextLabel.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Contour rouge
+TextLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+TextLabel.BackgroundTransparency = 0.2
+TextLabel.BorderSizePixel = 2
+TextLabel.BorderColor3 = Color3.fromRGB(255, 0, 0)
 TextLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
 TextLabel.Size = UDim2.new(0, 410, 0, 30)
 TextLabel.Font = Enum.Font.SourceSans
 TextLabel.Text = "SB team     V3                  "
-TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)  -- Texte rouge
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
 TextLabel.TextScaled = true
 TextLabel.Active = true
 TextLabel.Draggable = true
 
+local labelCorner = Instance.new("UICorner")
+labelCorner.CornerRadius = UDim.new(0, 6)
+labelCorner.Parent = TextLabel
+
 MenuPanel.Parent = TextLabel
-MenuPanel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)  -- Gris clair pour le MenuPanel
-MenuPanel.BorderColor3 = Color3.fromRGB(255, 0, 0)  -- Bordure rouge
+MenuPanel.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+MenuPanel.BorderColor3 = Color3.fromRGB(255, 0, 0)
 MenuPanel.BorderSizePixel = 2
 MenuPanel.Position = UDim2.new(0, 0, 1, 0)
 MenuPanel.Size = UDim2.new(0, 410, 0, 400)
 MenuPanel.Visible = false
 
+local panelCorner = Instance.new("UICorner")
+panelCorner.CornerRadius = UDim.new(0, 6)
+panelCorner.Parent = MenuPanel
+
 MinimizeButton.Parent = TextLabel
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- Rouge
-MinimizeButton.BorderColor3 = Color3.fromRGB(35, 35, 35)  -- Gris foncé
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+MinimizeButton.BorderColor3 = Color3.fromRGB(35, 35, 35)
 MinimizeButton.BorderSizePixel = 2
 MinimizeButton.Position = UDim2.new(0.9, 10, 0.5, -14)
 MinimizeButton.Size = UDim2.new(0, 30, 0, 26)
 MinimizeButton.Font = Enum.Font.SourceSans
 MinimizeButton.Text = ""
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Texte blanc
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 MinimizeButton.TextSize = 18
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 6)
+buttonCorner.Parent = MinimizeButton
 
 bottomLine.Parent = MenuPanel
 bottomLine.Size = UDim2.new(1, 0, 0, 3)
 bottomLine.Position = UDim2.new(0, 0, 1, -2)
-bottomLine.BackgroundColor3 = Color3.fromRGB(109, 109, 109)  -- Gris moyen
-bottomLine.BackgroundTransparency = 0.2 -- Légèrement transparent
+bottomLine.BackgroundColor3 = Color3.fromRGB(109, 109, 109)
+bottomLine.BackgroundTransparency = 0.2
 bottomLine.BorderSizePixel = 0
+
+local bottomCorner = Instance.new("UICorner")
+bottomCorner.CornerRadius = UDim.new(0, 3)
+bottomCorner.Parent = bottomLine
+
 
 
 
