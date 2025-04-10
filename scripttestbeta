@@ -492,20 +492,12 @@ local missions_VillsPlanet = {
 
 
 
-if isLoop1Active then
-    if game.PlaceId == 3311165597 then
-        missions = missions_Planet
-        
-    elseif game.PlaceId == 5151400895 then
-        missions = missions_VillsPlanet
-        
-    else
-        missions = {}  -- Si aucun des PlaceId ne correspond, missions devient une table vide.
-    end
+if game.PlaceId == 3311165597 then
+    missions = missions_Planet
+elseif game.PlaceId == 5151400895 then
+    missions = missions_VillsPlanet
 else
-    -- Vous pouvez ajouter des actions ici si le `isLoop1Active` est false
-    -- Par exemple, réinitialiser missions ou d'autres actions selon ce que vous voulez faire
-    missions = {}  -- Par exemple, réinitialiser missions si isLoop1Active est false
+    missions = {}  -- Si tu n'es pas dans un de ces jeux, la liste est vide.
 end
 
 
