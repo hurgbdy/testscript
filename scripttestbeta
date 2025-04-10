@@ -1,27 +1,60 @@
+-- Services
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- 🔐 Ton vrai lien LootLabs (à ne pas modifier)
+-- Créer l'interface
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+screenGui.Name = "WhitelistUI"
+
+-- Boîte de texte pour entrer la clé
+local textBox = Instance.new("TextBox", screenGui)
+textBox.Size = UDim2.new(0, 200, 0, 50)
+textBox.Position = UDim2.new(0.5, -100, 0.4, 0)
+textBox.PlaceholderText = "Enter your key"
+textBox.TextScaled = true
+
+-- Bouton GetKey
+local getKeyButton = Instance.new("TextButton", screenGui)
+getKeyButton.Size = UDim2.new(0, 200, 0, 50)
+getKeyButton.Position = UDim2.new(0.5, -100, 0.5, 0)
+getKeyButton.Text = "GET KEY"
+getKeyButton.TextScaled = true
+
+-- Bouton CheckKey (caché au début)
+local checkKeyButton = Instance.new("TextButton", screenGui)
+checkKeyButton.Size = UDim2.new(0, 200, 0, 50)
+checkKeyButton.Position = UDim2.new(0.5, -100, 0.6, 0)
+checkKeyButton.Text = "CHECK KEY"
+checkKeyButton.TextScaled = true
+checkKeyButton.Visible = false
+
+-- Ton lien lootlabs
 local lootlabsLink = "https://lootlabs.net/key-system/5e0d4ff2259d74a36ffccfeafe4c0e414d67fa5965b8e47f923a40fa6e5262a9"
 
--- 🎯 Copier le lien dans le presse-papiers
-GetKey.MouseButton1Click:Connect(function()
+-- Quand on clique sur GET KEY
+getKeyButton.MouseButton1Click:Connect(function()
 	setclipboard(lootlabsLink)
-	print("Lien LootLabs copié :", lootlabsLink)
+	checkKeyButton.Visible = true
+	textBox.Text = ""
 end)
 
--- ✅ Vérification de la clé
-CheckKey.MouseButton1Click:Connect(function()
-	local key = textBox.Text -- la clé entrée par l'utilisateur
-	local response
+-- Quand on clique sur CHECK KEY
+checkKeyButton.MouseButton1Click:Connect(function()
+	local key = textBox.Text
+	if key == "" then
+		textBox.Text = "Please enter a key"
+		return
+	end
+
 	local success, result = pcall(function()
-		response = game:HttpGet("https://yourserver.com/keys/"..key..".txt")
+		-- Mets ici le vrai lien vers tes clés hébergées
+		return game:HttpGet("https://yourserver.com/keys/"..key..".txt")
 	end)
 
-	if success and response then
-		loadstring(response)()
+	if success and result then
+		loadstring(result)()
 	else
-		warn("Clé invalide ou expirée.")
+		textBox.Text = "Invalid Key"
 	end
 end)
