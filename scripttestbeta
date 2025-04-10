@@ -30,7 +30,8 @@ checkKeyButton.TextScaled = true
 checkKeyButton.Visible = false
 
 -- Ton lien lootlabs
-local lootlabsLink = "https://lootlabs.net/key-system/5e0d4ff2259d74a36ffccfeafe4c0e414d67fa5965b8e47f923a40fa6e5262a9/"..HttpService:GenerateGUID(false)
+local lootlabsLink = "https://lootlabs.net/key-system/5e0d4ff2259d74a36ffccfeafe4c0e414d67fa5965b8e47f923a40fa6e5262a9"
+
 
 
 -- Quand on clique sur GET KEY
