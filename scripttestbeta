@@ -686,58 +686,59 @@ end)
 
 task.spawn(function()
     while true do
-        task.wait()
+        task.wait()  -- Délai pour réduire la fréquence de vérification
 
-        -- On vérifie que loop1 est actif et que missions est bien rempli
-        if  #missions > 0 then
-            task.spawn(function()
-                local player = game.Players.LocalPlayer
-                local data = game.ReplicatedStorage.Datas[player.UserId]
-                local mission = data.Quest.Value
+        -- Vérifie que missions est bien rempli et que le joueur est valide
+        if #missions > 0 then
+            local player = game.Players.LocalPlayer
+            if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
+                return
+            end
 
-                if not player or not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
-                    
-                    return
+            -- Récupère la mission du joueur
+            local data = game.ReplicatedStorage.Datas[player.UserId]
+            local mission = data.Quest.Value
+
+            local bossName
+            for _, quest in ipairs(missions) do
+                if quest.name == mission then
+                    bossName = quest.bossName
+                    break
                 end
+            end
 
-                local bossName
-                for _, quest in ipairs(missions) do
-                    if quest.name == mission then
-                        bossName = quest.bossName
-                        break
-                    end
+            -- Si le boss n'est pas trouvé, on sort
+            if not bossName then
+                return
+            end
+
+            local bossCount = 0
+            -- Vérifie la présence du boss dans le jeu
+            for _, boss in ipairs(game.Workspace.Living:GetChildren()) do
+                if boss.Name == bossName and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
+                    bossCount += 1
+                    player.Status.Blocking.Value = true
+
+                    local enemyHRP = boss.HumanoidRootPart
+                    local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
+
+                    -- Téléporte le joueur derrière le boss
+                    player.Character.HumanoidRootPart.CFrame = behindPosition
+
+                    task.wait()  -- Délai avant de réessayer pour éviter de spammer
                 end
+            end
 
-                if not bossName then
-                    
-                    return
-                end
-
-                local bossCount = 0
-                for _, boss in ipairs(game.Workspace.Living:GetChildren()) do
-                    if boss.Name == bossName and boss:FindFirstChild("HumanoidRootPart") and boss:FindFirstChild("Humanoid") and boss.Humanoid.Health > 0 then
-                        bossCount += 1
-                        player.Status.Blocking.Value = true
-
-                        local enemyHRP = boss.HumanoidRootPart
-                        local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
-
-                        player.Character.HumanoidRootPart.CFrame = behindPosition
-                       
-
-                        task.wait()
-                    end
-                end
-
-                if bossCount == 0 then
-                    
-                else
-                    
-                end
-            end)
+            -- Si aucun boss n'est trouvé, vous pouvez ajouter une action ici, comme retourner à une quête précédente ou signaler l'absence du boss
+            if bossCount == 0 then
+                -- Ajoutez votre logique ici si le boss est absent
+            else
+                -- Boss trouvé, vous pouvez ajouter des actions supplémentaires comme attaquer
+            end
         end
     end
 end)
+
 
 
 local player = game.Players.LocalPlayer
