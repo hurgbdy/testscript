@@ -464,57 +464,33 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
             local data = game.ReplicatedStorage.Datas[player.UserId]
             local events = game:GetService("ReplicatedStorage").Package.Events
             
--- Définir les listes de missions
-local missions_Planet = {
-    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 4000 },
-    { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 4001, endRange = 12000 },
-    { name = "Radish", bossName = "Radish", requiredValue = 12001, endRange = 1200000 },
-    { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 1200001 , endRange = 2200000 },
-    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 2200001 , endRange = 6200000 },
-    { name = "Broccoli", bossName = "Broccoli", requiredValue = 6200001 , endRange = 12200000 },
-    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 12200001, endRange = math.huge }
-}
+ local missions = {}
 
-local missions_VillsPlanet = {
-    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 250000001, endRange = 450000000 },
-    { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 450000001 , endRange = 750000000 },
-    { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 750000001 , endRange = 1250000000 },
-    { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 1250000001 , endRange = 1750000000 },
-    { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 1750000001 , endRange = 1950000000 },
-    { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 1950000001 , endRange = 2500000000 },
-    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 2500000001 , endRange = math.huge }
-}
-
--- Initialiser la variable missions vide
-local missions = {}
-
--- Vérifier si isLoop1Active est vrai et sélectionner les missions en fonction de l'emplacement
-if isLoop1Active then
-    print("isLoop1Active est vrai")
-    if game.PlaceId == 3311165597 then
-        print("PlaceId est 3311165597, missions = missions_Planet")
-        missions = missions_Planet  -- Assignation de la liste missions_Planet
-    elseif game.PlaceId == 5151400895 then
-        print("PlaceId est 5151400895, missions = missions_VillsPlanet")
-        missions = missions_VillsPlanet  -- Assignation de la liste missions_VillsPlanet
-    else
-        print("PlaceId inconnu, missions = {}")
-        missions = {}  -- Liste vide si le joueur n'est pas dans les zones définies
-    end
-else
-    warn("isLoop1Active est faux, le bloc ne sera pas exécuté")
-end
-
--- Afficher les missions sélectionnées
-if #missions > 0 then
-    print("Missions actuelles:")
-    for i, mission in ipairs(missions) do
-        print(string.format("Mission %d: %s (Boss: %s, Required Value: %d, End Range: %d)",
-            i, mission.name, mission.bossName, mission.requiredValue, mission.endRange))
-    end
-else
-    print("Aucune mission disponible.")
-end
+            if game.PlaceId == 3311165597 then
+                local missions_Planet = {
+                    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
+                    { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
+                    { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 3500000 },
+                    { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500001, endRange = 10000000 },
+                    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
+                    { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
+                    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge }
+                }
+                missions = missions_Planet  -- Assigner directement missions_Planet si le PlaceId est correct
+            elseif game.PlaceId == 5151400895 then
+                local missions_VillsPlanet = {
+                    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 350000001, endRange = 700000000 },
+                    { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 700000001, endRange = 1000000000 },
+                    { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 1000000001, endRange = 2000000000 },
+                    { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2000000001, endRange = 4200000000 },
+                    { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
+                    { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
+                    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
+                }
+                missions = missions_VillsPlanet  -- Assigner directement missions_VillsPlanet si le PlaceId est correct
+            else
+                missions = {}  -- Liste vide si aucun PlaceId ne correspond
+end            
 
 
 
@@ -532,13 +508,24 @@ local function BossIsAlive(mobName)
 end
 
 local function getQuestByStat(stat)
+    local bestIndex = nil
+    local closestRequiredValue = -math.huge
+
     for i, mission in ipairs(missions) do
-        if stat >= mission.requiredValue and stat <= mission.endRange then
-            return mission.name, mission.bossName, i
+        if mission.requiredValue <= stat and mission.requiredValue > closestRequiredValue then
+            bestIndex = i
+            closestRequiredValue = mission.requiredValue
         end
     end
+
+    if bestIndex then
+        local mission = missions[bestIndex]
+        return mission.name, mission.bossName, bestIndex
+    end
+
     return nil, nil, nil
 end
+
 
 local function assignQuest()
     
