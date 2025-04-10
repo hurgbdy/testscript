@@ -464,10 +464,10 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
             local data = game.ReplicatedStorage.Datas[player.UserId]
             local events = game:GetService("ReplicatedStorage").Package.Events
             
- local missions = {}
+            local missions = missions or {}  -- Si missions n'est pas défini, on l'initialise à une table vide
 
             if game.PlaceId == 3311165597 then
-                local missions_Planet = {
+                missions = {
                     { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
                     { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
                     { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 3500000 },
@@ -476,9 +476,8 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
                     { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
                     { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge }
                 }
-                missions = missions_Planet  -- Assigner directement missions_Planet si le PlaceId est correct
             elseif game.PlaceId == 5151400895 then
-                local missions_VillsPlanet = {
+                missions = {
                     { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 350000001, endRange = 700000000 },
                     { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 700000001, endRange = 1000000000 },
                     { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 1000000001, endRange = 2000000000 },
@@ -487,10 +486,8 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
                     { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
                     { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
                 }
-                missions = missions_VillsPlanet  -- Assigner directement missions_VillsPlanet si le PlaceId est correct
-            else
-                missions = {}  -- Liste vide si aucun PlaceId ne correspond
-end            
+            end
+             
 
 
 
