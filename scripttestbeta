@@ -464,29 +464,46 @@ local isLoop7Active = safeLoadSwitchState("Switch7")
             local data = game.ReplicatedStorage.Datas[player.UserId]
             local events = game:GetService("ReplicatedStorage").Package.Events
             
-            local missions = missions or {}  -- Si missions n'est pas défini, on l'initialise à une table vide
+            local missions = nil  -- Initialiser missions à nil par défaut
 
-            if game.PlaceId == 3311165597 then
-                missions = {
-                    { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
-                    { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
-                    { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 3500000 },
-                    { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500001, endRange = 10000000 },
-                    { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
-                    { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
-                    { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge }
-                }
-            elseif game.PlaceId == 5151400895 then
-                missions = {
-                    { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 350000001, endRange = 700000000 },
-                    { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 700000001, endRange = 1000000000 },
-                    { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 1000000001, endRange = 2000000000 },
-                    { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2000000001, endRange = 4200000000 },
-                    { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
-                    { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
-                    { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
-                }
+            while true do
+                if isLoop1Active then
+                    print("isLoop1Active est vrai, chargement des missions...")
+            
+                    if game.PlaceId == 3311165597 then
+                        missions = {
+                            { name = "X Fighter Trainer", bossName = "X Fighter", requiredValue = 0, endRange = 20000 },
+                            { name = "Kid Nohag", bossName = "Kid Nohag", requiredValue = 20001, endRange = 100000 },
+                            { name = "Radish", bossName = "Radish", requiredValue = 100001, endRange = 3500000 },
+                            { name = "Perfect Atom", bossName = "Perfect Atom", requiredValue = 3500001, endRange = 10000000 },
+                            { name = "SSJB Wukong", bossName = "SSJB Wukong", requiredValue = 10000001, endRange = 56300000 },
+                            { name = "Broccoli", bossName = "Broccoli", requiredValue = 56300001, endRange = 400000000 },
+                            { name = "SSJG Kakata", bossName = "SSJG Kakata", requiredValue = 400000001, endRange = math.huge }
+                        }
+                        print("Liste des missions mise à jour pour le Planet.")
+            
+                    elseif game.PlaceId == 5151400895 then
+                        missions = {
+                            { name = "Vegetable (GoD in-training)", bossName = "Vegetable (GoD in-training)", requiredValue = 350000001, endRange = 700000000 },
+                            { name = "Wukong (Omen)", bossName = "Wukong (Omen)", requiredValue = 700000001, endRange = 1000000000 },
+                            { name = "Vills (50%)", bossName = "Vills (50%)", requiredValue = 1000000001, endRange = 2000000000 },
+                            { name = "Wukong (LBSSJ4)", bossName = "Wukong (LBSSJ4)", requiredValue = 2000000001, endRange = 4200000000 },
+                            { name = "Vekuta (LBSSJ4)", bossName = "Vekuta (LBSSJ4)", requiredValue = 4200000001, endRange = 5000000000 },
+                            { name = "Wukong Rose", bossName = "Wukong Rose", requiredValue = 5000000001, endRange = 7500000001 },
+                            { name = "Vekuta (SSJBUI)", bossName = "Vekuta (SSJBUI)", requiredValue = 7500000001, endRange = math.huge }
+                        }
+                        print("Liste des missions mise à jour pour le Vills Planet.")
+            
+                    end
+                else
+                    print("isLoop1Active est faux, suppression des missions...")
+                    missions = nil  -- Supprime la liste des missions
+                end
+            
+                -- Ajouter un délai pour éviter une boucle infinie trop rapide
+                wait(1)  -- Ajuste cette valeur si nécessaire
             end
+            
              
 
 
