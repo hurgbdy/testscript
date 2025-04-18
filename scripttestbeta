@@ -616,6 +616,25 @@ end
 
 local isTakingQuest = false
 
+local TweenService = game:GetService("TweenService")
+
+-- Téléportation fluide safe
+local function tpSmooth(targetCFrame)
+    local char = player.Character
+    if not char then return end
+
+    local hrp = char:WaitForChild("HumanoidRootPart", 3)
+    if not hrp then return end
+
+    local tween = TweenService:Create(hrp, TweenInfo.new(0.4, Enum.EasingStyle.Linear), {
+        CFrame = targetCFrame
+    })
+
+    tween:Play()
+    tween.Completed:Wait()
+end
+
+-- Script startMission avec tp modifié
 local function startMission()
     if isLoop1Active then
         if isTakingQuest then
@@ -632,29 +651,23 @@ local function startMission()
                 return
             end
 
-            -- Afficher "Prise de quest" lorsque la quête est prise
-            
-
             -- Recherche le NPC pour la quête sélectionnée
             local npc = game:GetService("Workspace").Others.NPCs:FindFirstChild(SelectedQuest)
             if npc and npc:FindFirstChild("HumanoidRootPart") then
-                -- Téléporte le joueur près du NPC
-                player.Character.HumanoidRootPart.CFrame = npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 4)
-                task.wait(4)
+                -- Téléportation fluide vers le NPC (offset de 4 studs derrière)
+                tpSmooth(npc.HumanoidRootPart.CFrame * CFrame.new(0, 0, 4))
+                task.wait(1)
 
                 -- Accepte la quête
                 events.Qaction:InvokeServer(npc)
-                
-            else
-                
             end
         end)
 
-        -- Attendre un peu avant de réinitialiser isTakingQuest
-        task.wait(4)
+        task.wait(1)
         isTakingQuest = false
     end
 end
+
 
 task.spawn(function()
     while true do
@@ -726,6 +739,24 @@ end)
 
 
 
+local TweenService = game:GetService("TweenService")
+
+-- Téléportation fluide safe
+local function tpSmooth(targetCFrame)
+    local char = game.Players.LocalPlayer.Character
+    if not char then return end
+
+    local hrp = char:WaitForChild("HumanoidRootPart", 3)
+    if not hrp then return end
+
+    local tween = TweenService:Create(hrp, TweenInfo.new(0.4, Enum.EasingStyle.Linear), {
+        CFrame = targetCFrame
+    })
+
+    tween:Play()
+    tween.Completed:Wait()
+end
+
 task.spawn(function()
     while true do
         task.wait(1)
@@ -766,7 +797,8 @@ task.spawn(function()
                             local enemyHRP = boss.HumanoidRootPart
                             local behindPosition = enemyHRP.CFrame * CFrame.new(0, 0, 4)
 
-                            player.Character.HumanoidRootPart.CFrame = behindPosition
+                            -- Utilise la téléportation fluide (safe)
+                            tpSmooth(behindPosition)
                         end)
 
                         task.wait(1)
