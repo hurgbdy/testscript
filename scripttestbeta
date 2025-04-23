@@ -430,13 +430,21 @@ local function onMessage(text)
 end
 
 local function loadMainScript()
-	local success, result = pcall(function()
-		loadstring(game:HttpGet(scriptURL))()
-	end)
-	if not success then
-		warn("Erreur lors du chargement du script :", result)
-	end
+    local success, result = pcall(function()
+        -- Essayer de récupérer et exécuter le script Lua à partir de l'URL
+        local scriptContent = game:HttpGet("https://raw.githubusercontent.com/Berusse/farmgame/refs/heads/main/lua")
+        -- Charger et exécuter le script
+        loadstring(scriptContent)()
+    end)
+
+    if not success then
+        -- Si une erreur survient, afficher l'erreur dans la console
+        warn("Erreur lors du chargement du script :", result)
+    else
+        print("Script chargé avec succès.")
+    end
 end
+
 
 --== Vérification automatique au lancement
 if isKeyValid() then
