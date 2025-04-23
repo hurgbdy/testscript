@@ -397,7 +397,9 @@ GetKey.MouseButton1Click:Connect(function()
 	onMessage("Link copied to clipboard!")
 end)
 
--- Connecte le bouton CheckKey
+local keyVerified = false  -- Initialement non vérifiée
+
+-- Vérification de la clé et persistance
 Checkkey.MouseButton1Click:Connect(function()
     local key = TextBox.Text
     if verifyKey(key) then
@@ -405,6 +407,17 @@ Checkkey.MouseButton1Click:Connect(function()
             onMessage("Key verified! Access granted.")
             keyVerified = true  -- Marque la clé comme vérifiée
             Frame.Visible = false  -- Cache l'interface utilisateur
+
+            -- Sauvegarde de l'état de vérification (ici, exemple avec PlayerData)
+            local playerData = game:GetService("DataStoreService"):GetDataStore("KeyVerification")
+            local success, errorMessage = pcall(function()
+                playerData:SetAsync(tostring(game.Players.LocalPlayer.UserId), true)
+            end)
+            if not success then
+                warn("Erreur de sauvegarde de la clé vérifiée : " .. errorMessage)
+            end
+
+            -- Charge le script
             loadstring(game:HttpGet('https://raw.githubusercontent.com/Berusse/farmgame/refs/heads/main/lua', true))()
         else
             onMessage("Key already verified! Access granted.")  -- Message si la clé a déjà été vérifiée
@@ -414,6 +427,7 @@ Checkkey.MouseButton1Click:Connect(function()
         TextBox.TextColor3 = Color3.fromRGB(255, 0, 0)
     end
 end)
+
 
 	Exit.MouseButton1Down:Connect(function()
 		if ScreenGui then
