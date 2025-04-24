@@ -397,59 +397,24 @@ GetKey.MouseButton1Click:Connect(function()
 	onMessage("Link copied to clipboard!")
 end)
 
-local keyVerified = false  -- Initialement non vérifiée
-
-local HttpService = game:GetService("HttpService")
-local keyVerified = false  -- Initialement non vérifiée
-
--- Fonction pour charger les données JSON depuis une variable locale
-local function loadKeyData()
-    local success, data = pcall(function()
-        return HttpService:JSONDecode(game:GetService("DataStoreService"):GetDataStore("KeyVerification"):GetAsync("keyVerificationData"))
-    end)
-    if success and data then
-        return data.keyVerified or false
+GetKey.MouseButton1Click:Connect(function()
+    local key = TextBox.Text
+    if verifyKey(key) then
+        print("Clé vérifiée avec succès!")
+        
     else
-        return false  -- Par défaut, la clé n'est pas vérifiée
+        print("Clé invalide!")
+        -- Afficher un message d'erreur sur l'interface utilisateur
     end
-end
-
--- Fonction pour sauvegarder l'état de la clé dans un "fichier JSON"
-local function saveKeyData()
-    local data = {
-        keyVerified = keyVerified
-    }
-    local jsonData = HttpService:JSONEncode(data)
-    local success, errorMessage = pcall(function()
-        game:GetService("DataStoreService"):GetDataStore("KeyVerification"):SetAsync("keyVerificationData", jsonData)
-    end)
-    if not success then
-        warn("Erreur de sauvegarde JSON : " .. errorMessage)
-    end
-end
-
--- Récupère l'état de la clé depuis le stockage
-keyVerified = loadKeyData()
+end)
 
 Checkkey.MouseButton1Click:Connect(function()
     local key = TextBox.Text
-    if verifyKey(key) then
-        if not keyVerified then
-            onMessage("Key verified! Access granted.")
-            keyVerified = true  -- Marque la clé comme vérifiée
-            Frame.Visible = false  -- Cache l'interface utilisateur
-
-            -- Sauvegarde de l'état de vérification dans le "fichier JSON"
-            saveKeyData()
-
-            -- Charge le script
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/Berusse/farmgame/refs/heads/main/lua', true))()
-        else
-            onMessage("Key already verified! Access granted.")  -- Message si la clé a déjà été vérifiée
-        end
+    local result = verifyKey(key)
+    if result then
+        TextLabel.Text = "Clé valide!"
     else
-        TextBox.Text = "Invalid Key!"
-        TextBox.TextColor3 = Color3.fromRGB(255, 0, 0)
+        TextLabel.Text = "Clé invalide!"
     end
 end)
 
