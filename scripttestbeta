@@ -114,6 +114,30 @@ local copyLink = function()
 	end
 end
 
+
+-- Chemin du fichier local où on stocke la clé validée
+local keyFilePath = "validated_platoboost_key.txt"
+
+-- 🔄 Récupère une clé sauvegardée
+function getSavedKey()
+	if isfile and isfile(keyFilePath) then
+		local ok, content = pcall(readfile, keyFilePath)
+		if ok and content then
+			return content
+		end
+	end
+	return nil
+end
+
+-- 💾 Sauvegarde une clé valide localement
+function saveValidKey(key)
+	if writefile then
+		pcall(writefile, keyFilePath, key)
+	end
+end
+
+
+
 local redeemKey = function(key)
 	local nonce = generateNonce();
 	local endpoint = host .. "/public/redeem/" .. fToString(service);
