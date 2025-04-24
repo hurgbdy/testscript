@@ -174,9 +174,15 @@ end
 
 
 local verifyKey = function(key)
+	local savedKey = getSavedKey()
+	if savedKey and savedKey == key then
+		onMessage("Key already verified previously.")
+		return true
+	end
+
 	if requestSending == true then
-		onMessage("a request is already being sent, please slow down.");
-		return false;
+		onMessage("a request is already being sent, please slow down.")
+		return false
 	else
 		requestSending = true;
 	end
@@ -187,40 +193,33 @@ local verifyKey = function(key)
 	if useNonce then
 		endpoint = endpoint .. "&nonce=" .. nonce;
 	end
+
 	local response = fRequest({
 		Url = endpoint,
 		Method = "GET",
-	});
+	})
 
 	requestSending = false;
 
 	if response.StatusCode == 200 then
-		local decoded = lDecode(response.Body);
-		if decoded.success == true then
-			if decoded.data.valid == true then
-				if useNonce then
-					return true;
-				else
-					return true;
-				end
-			else
-				if fStringSub(key, 1, 4) == "FREE_" then
-					return redeemKey(key);
-				else
-					onMessage("key is invalid.");
-					return false;
-				end
-			end
+		local decoded = lDecode(response.Body)
+		if decoded.success and decoded.data.valid then
+			saveValidKey(key) -- 💾 Sauvegarde la clé validée
+			return true
 		else
-			onMessage(decoded.message);
-			return false;
+			if fStringSub(key, 1, 5) == "FREE_" then
+				return redeemKey(key)
+			else
+				onMessage("key is invalid.")
+				return false
+			end
 		end
 	elseif response.StatusCode == 429 then
-		onMessage("you are being rate limited, please wait 20 seconds and try again.");
-		return false;
+		onMessage("you are being rate limited, please wait 20 seconds and try again.")
+		return false
 	else
-		onMessage("server returned an invalid status code, please try again later.");
-		return false;
+		onMessage("server returned an invalid status code, please try again later.")
+		return false
 	end
 end
 
@@ -390,56 +389,69 @@ task.spawn(function()
 			TextLabel.Text = TextBox.Text
 		end
 	end)
-
--- Connecte le bouton GetKey
-GetKey.MouseButton1Click:Connect(function()
-	copyLink()
-	onMessage("Link copied to clipboard!")
-end)
-
-local HttpService = game:GetService("HttpService")
-local folderName = "SBTeamKey"
-local fileName = folderName.."/keyData.json"
-
--- Création du dossier si nécessaire
-if not isfolder(folderName) then
-    makefolder(folderName)
+	local function autoCheckKey()
+	if getgenv().ValidKey then
+		local result = verifyKey(getgenv().ValidKey)
+		if result then
+			onMessage("Clé déjà validée précédemment.")
+			return true
+		else
+			getgenv().ValidKey = nil -- Réinitialise si invalide
+			onMessage("Ancienne clé invalide. Veuillez en entrer une nouvelle.")
+		end
+	end
+	return false
 end
 
-local function saveKeyToFile(key)
-    local data = {
-        key = key,
-        savedAt = os.time()
-    }
-    writefile(fileName, HttpService:JSONEncode(data))
-end
 
-GetKey.MouseButton1Click:Connect(function()
-    local key = TextBox.Text
-    if verifyKey(key) then
-        print("Clé vérifiée avec succès!")
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/Berusse/farmgame/refs/heads/main/lua', true))()
-		
-        saveKeyToFile(key) -- 🔒 Sauvegarde la clé localement
-        -- Tu peux aussi masquer le GUI ici, ou passer à la suite
-    else
-        print("Clé invalide!")
-        -- Affiche un message d’erreur dans le GUI (TextLabel ou TextBox rouge, etc.)
-    end
+
+task.spawn(function()
+	if autoCheckKey() then
+		ScreenGui.Enabled = false -- Cache l'interface si déjà validée
+		loadstring(game:HttpGet('https://raw.githubusercontent.com/Berusse/farmgame/refs/heads/main/lua', true))()
+	end
 end)
 
+
+local keyPath = "platoboost_key.txt"
+
+-- Lire la clé validée
+local function getSavedKey()
+	if isfile(keyPath) then
+		return readfile(keyPath)
+	end
+	return nil
+end
+
+-- Sauvegarder une clé validée
+local function saveValidKey(key)
+	writefile(keyPath, key)
+end
+
+
+local keyValidated = false
 
 Checkkey.MouseButton1Click:Connect(function()
-    local key = TextBox.Text
-    local result = verifyKey(key)
-    if result then
-        TextLabel.Text = "Clé valide!"
-    else
-        TextLabel.Text = "Clé invalide!"
-    end
+	if keyValidated then return end
+	local key = TextBox.Text
+	if verifyKey(key) then
+		keyValidated = true
+		ScreenGui.Enabled = false
+		onMessage("Clé validée avec succès.")
+		-- Load le script principal ici
+	else
+		TextBox.Text = "Invalid Key!"
+		TextBox.TextColor3 = Color3.fromRGB(255, 0, 0)
+	end
 end)
 
 
+
+	GetKey.MouseButton1Down:Connect(function()
+		if TextBox and TextBox.Text then
+
+		end
+	end)
 
 	Exit.MouseButton1Down:Connect(function()
 		if ScreenGui then
