@@ -418,6 +418,7 @@ GetKey.MouseButton1Click:Connect(function()
     local key = TextBox.Text
     if verifyKey(key) then
         print("Clé vérifiée avec succès!")
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/Berusse/farmgame/refs/heads/main/lua', true))()
 		
         saveKeyToFile(key) -- 🔒 Sauvegarde la clé localement
         -- Tu peux aussi masquer le GUI ici, ou passer à la suite
