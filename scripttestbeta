@@ -455,14 +455,15 @@ end
 
 local keyValidated = false
 
+GetKey.MouseButton1Click:Connect(function()
+	copyLink()
+end)
+
 Checkkey.MouseButton1Click:Connect(function()
-	if keyValidated then return end
 	local key = TextBox.Text
 	if verifyKey(key) then
-		keyValidated = true
-		ScreenGui.Enabled = false
-		onMessage("Clé validée avec succès.")
-		-- Load le script principal ici
+		ScreenGui:Destroy() -- OU cacher juste l'interface
+		loadstring(game:HttpGet("https://your/script/link/here.lua"))() -- Charge ton script principal
 	else
 		TextBox.Text = "Invalid Key!"
 		TextBox.TextColor3 = Color3.fromRGB(255, 0, 0)
