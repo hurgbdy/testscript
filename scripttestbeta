@@ -397,16 +397,36 @@ GetKey.MouseButton1Click:Connect(function()
 	onMessage("Link copied to clipboard!")
 end)
 
+local HttpService = game:GetService("HttpService")
+local folderName = "SBTeamKey"
+local fileName = folderName.."/keyData.json"
+
+-- Création du dossier si nécessaire
+if not isfolder(folderName) then
+    makefolder(folderName)
+end
+
+local function saveKeyToFile(key)
+    local data = {
+        key = key,
+        savedAt = os.time()
+    }
+    writefile(fileName, HttpService:JSONEncode(data))
+end
+
 GetKey.MouseButton1Click:Connect(function()
     local key = TextBox.Text
     if verifyKey(key) then
         print("Clé vérifiée avec succès!")
-        
+		
+        saveKeyToFile(key) -- 🔒 Sauvegarde la clé localement
+        -- Tu peux aussi masquer le GUI ici, ou passer à la suite
     else
         print("Clé invalide!")
-        -- Afficher un message d'erreur sur l'interface utilisateur
+        -- Affiche un message d’erreur dans le GUI (TextLabel ou TextBox rouge, etc.)
     end
 end)
+
 
 Checkkey.MouseButton1Click:Connect(function()
     local key = TextBox.Text
