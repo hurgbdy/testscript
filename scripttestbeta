@@ -399,7 +399,38 @@ end)
 
 local keyVerified = false  -- Initialement non vérifiée
 
--- Vérification de la clé et persistance
+local HttpService = game:GetService("HttpService")
+local keyVerified = false  -- Initialement non vérifiée
+
+-- Fonction pour charger les données JSON depuis une variable locale
+local function loadKeyData()
+    local success, data = pcall(function()
+        return HttpService:JSONDecode(game:GetService("DataStoreService"):GetDataStore("KeyVerification"):GetAsync("keyVerificationData"))
+    end)
+    if success and data then
+        return data.keyVerified or false
+    else
+        return false  -- Par défaut, la clé n'est pas vérifiée
+    end
+end
+
+-- Fonction pour sauvegarder l'état de la clé dans un "fichier JSON"
+local function saveKeyData()
+    local data = {
+        keyVerified = keyVerified
+    }
+    local jsonData = HttpService:JSONEncode(data)
+    local success, errorMessage = pcall(function()
+        game:GetService("DataStoreService"):GetDataStore("KeyVerification"):SetAsync("keyVerificationData", jsonData)
+    end)
+    if not success then
+        warn("Erreur de sauvegarde JSON : " .. errorMessage)
+    end
+end
+
+-- Récupère l'état de la clé depuis le stockage
+keyVerified = loadKeyData()
+
 Checkkey.MouseButton1Click:Connect(function()
     local key = TextBox.Text
     if verifyKey(key) then
@@ -408,14 +439,8 @@ Checkkey.MouseButton1Click:Connect(function()
             keyVerified = true  -- Marque la clé comme vérifiée
             Frame.Visible = false  -- Cache l'interface utilisateur
 
-            -- Sauvegarde de l'état de vérification (ici, exemple avec PlayerData)
-            local playerData = game:GetService("DataStoreService"):GetDataStore("KeyVerification")
-            local success, errorMessage = pcall(function()
-                playerData:SetAsync(tostring(game.Players.LocalPlayer.UserId), true)
-            end)
-            if not success then
-                warn("Erreur de sauvegarde de la clé vérifiée : " .. errorMessage)
-            end
+            -- Sauvegarde de l'état de vérification dans le "fichier JSON"
+            saveKeyData()
 
             -- Charge le script
             loadstring(game:HttpGet('https://raw.githubusercontent.com/Berusse/farmgame/refs/heads/main/lua', true))()
@@ -427,6 +452,7 @@ Checkkey.MouseButton1Click:Connect(function()
         TextBox.TextColor3 = Color3.fromRGB(255, 0, 0)
     end
 end)
+
 
 
 	Exit.MouseButton1Down:Connect(function()
